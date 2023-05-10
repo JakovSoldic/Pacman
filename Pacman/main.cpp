@@ -12,6 +12,14 @@ using namespace std;
 #include "pacmanVariables.h"
 #include "Maze.h"
 
+int turnToX = 0, turnToY = 0;
+
+static float targetPosX;
+static float targetPosY;
+
+static float lastPosX;
+static float lastPosY;
+
 void drawMouth()//draw a mouth on pacmans location(basically a black triangle). Might possibly change this in the future
 {
 	glPushMatrix();
@@ -59,11 +67,14 @@ void drawPacMan()//draw a circle shape. Will have to make mouth within this func
 	glPopMatrix();
 }
 
-void updatePacman(float deltaTime)//after the user presses a key(WASD) within the movePacMan() function, call this function to check if pacman can move/check if there is a wall. Will have to update this function once the issue with the pixel to grid translation is resolved
+void updatePacman(float deltaTime)
 {
+	cout << pacmanGridX << " : " << pacmanGridY << endl;
+	cout << "targetPosX: " << targetPosX << " targetPosY: " << targetPosY << endl;
+	cout << "lastPosX: " << lastPosX << " lastPosY: " << lastPosY << endl;
 	//pacman is being drawn at the 6 location in the maze or his exact coords in the maze: [23][13]
-	pacmanGridY = (int)(13 + pacmanX);//constantly update his location in the maze/grid by incrementing/decrementing his Y coordinate in the maze by pacman X pixel/drawn coordinates
-	pacmanGridX = (int)(23 + pacmanY);//constantly update his location in the maze/grid by incrementing/decrementing his X coordinate in the maze by pacman Y pixel/drawn coordinates
+	//pacmanGridY = (int)(13 + pacmanX);//constantly update his location in the maze/grid by incrementing/decrementing his Y coordinate in the maze by pacman X pixel/drawn coordinates
+	//pacmanGridX = (int)(23 + pacmanY);//constantly update his location in the maze/grid by incrementing/decrementing his X coordinate in the maze by pacman Y pixel/drawn coordinates
 
 	//why increment his Y axis with his X drawn coordinates and vice versa? The maze is being drawn [j][i] instead of [i][j]
 
@@ -72,7 +83,13 @@ void updatePacman(float deltaTime)//after the user presses a key(WASD) within th
 	{
 		if (maze[pacmanGridX][pacmanGridY + 1] != Tiles::wall)//check if pacman has hit a wall when going right + 1. '+1' means 1 tile lenght since a tile is long 1. Check drawTiles() for refrence. Will need to include the Tiles::gate aswell here
 		{
-			pacmanX += pacmanVX * deltaTime;//move pacman in the X axis direction by his velocity * deltaTime. deltaTime to make his movement smoother
+			pacmanX += pacmanVX * deltaTime;// move pacman in the X axis direction by his velocity* deltaTime.deltaTime to make his movement smoother
+			if (abs(pacmanX - lastPosX) >= 1)
+			{
+				targetPosX += turnToX;
+				lastPosX = targetPosX;
+				pacmanGridY += 1;
+			}
 		}
 	}
 
@@ -81,6 +98,12 @@ void updatePacman(float deltaTime)//after the user presses a key(WASD) within th
 		if (maze[pacmanGridX][pacmanGridY - 1] != Tiles::wall)
 		{
 			pacmanX += pacmanVX * deltaTime;
+			if (abs(pacmanX - lastPosX) >= 1)
+			{
+				targetPosX += turnToX;
+				lastPosX = targetPosX;
+				pacmanGridY -= 1;
+			}
 		}
 	}
 
@@ -89,6 +112,12 @@ void updatePacman(float deltaTime)//after the user presses a key(WASD) within th
 		if (maze[pacmanGridX - 1][pacmanGridY] != Tiles::wall)
 		{
 			pacmanY += pacmanVY * deltaTime;//move pacman in the Y axis direction by his velocity * deltaTime. deltaTime to make his movement smoother
+			if (abs(pacmanY - lastPosY) >= 1)
+			{
+				targetPosY += turnToY;
+				lastPosY = targetPosY;
+				pacmanGridX -= 1;
+			}
 		}
 	}
 
@@ -97,6 +126,12 @@ void updatePacman(float deltaTime)//after the user presses a key(WASD) within th
 		if (maze[pacmanGridX + 1][pacmanGridY] != Tiles::wall)
 		{
 			pacmanY += pacmanVY * deltaTime;
+			if (abs(pacmanY - lastPosY) >= 1)
+			{
+				targetPosY += turnToY;
+				lastPosY = targetPosY;
+				pacmanGridX += 1;
+			}
 		}
 	}
 }
@@ -111,21 +146,25 @@ void movePacMan(unsigned char key, int x, int y)
 		mouthDirection = 0;//rotate mouth to the right inside drawMouth() function
 		pacmanVX = playerSpeed;//set pacman X velocity to 2.5
 		pacmanVY = 0;//set pacman Y velocity to 0
+		turnToX = 1;
 		break;
 	case 'a'://left
 		mouthDirection = 1;//rotate mouth to the left inside drawMouth() function
 		pacmanVX = -playerSpeed;
 		pacmanVY = 0;
+		turnToX = -1;
 		break;
 	case 'w'://up
 		mouthDirection = 2;//rotate mouth to the up inside drawMouth() function
 		pacmanVY = playerSpeed;//set pacman Y velocity to 2.5
 		pacmanVX = 0;//set pacman X velocity to 0
+		turnToY = 1;
 		break;
 	case 's'://down
 		mouthDirection = 3;//rotate mouth to the down inside drawMouth() function
 		pacmanVY = -playerSpeed;
 		pacmanVX = 0;
+		turnToY = -1;
 		break;
 	}
 	glutPostRedisplay();
@@ -133,6 +172,12 @@ void movePacMan(unsigned char key, int x, int y)
 
 void drawTiles(void)//go through the maze and then at certain locations draw certain shapes
 {
+	glPushMatrix();
+	glTranslatef(pacmanXStart, -pacmanYStart, 0);
+	drawMouth();
+	drawPacMan();
+	glPopMatrix();
+
     for (int i = 0; i < mapHeight; i++)
     {
         for (int j = 0; j < mapWidth; j++)
@@ -220,15 +265,6 @@ void drawTiles(void)//go through the maze and then at certain locations draw cer
 				glVertex2f(-0.5f, 0.5f);
 				glEnd();
 			}
-
-			if (maze[i][j] == 6)
-			{
-				glPushMatrix();
-				glTranslatef(j, -i, 0);
-				drawMouth();
-				drawPacMan();
-			}
-
             glPopMatrix();
         }
     }
