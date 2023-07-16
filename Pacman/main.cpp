@@ -1,140 +1,17 @@
 #include <iostream>
 #include <windows.h>
 #include <stdio.h>
-#include <math.h>
-#include <vector>
-#include <array>
 using namespace std;
 
 #include <GL/GL.h>
 #include <GL/freeglut.h>
 
-#include "pacmanVariables.h"
-#include "Maze.h"
+#include "pacman.h"
+#include "Red.h"
+#include "globalVariables.h"
 
-int turnToX = 0, turnToY = 0;
-
-static float targetPosX;
-static float targetPosY;
-
-static float lastPosX;
-static float lastPosY;
-
-void drawMouth()//draw a mouth on pacmans location(basically a black triangle). Might possibly change this in the future
-{
-	glPushMatrix();
-	glTranslatef(pacmanX, pacmanY, 0);
-	if (mouthDirection == 0) {
-		glRotatef(0, 0, 0, 1);
-	}
-	if (mouthDirection == 1) {
-		glRotatef(180, 0, 0, 1);
-	}
-	if (mouthDirection == 2) {
-		glRotatef(90, 0, 0, 1);
-	}
-	if (mouthDirection == 3) {
-		glRotatef(-90, 0, 0, 1);
-	}
-
-	glBegin(GL_TRIANGLES);
-	glColor3f(0, 0, 0);
-	glVertex3f(0, 0, 0);
-	glVertex3f(0.499, -0.37, 0);
-	glVertex3f(0.499, 0.37, 0);
-	glEnd();
-	glPopMatrix();
-}
-
-void drawPacMan()//draw a circle shape. Will have to make mouth within this function and then just rorate the whole pacman when he moves or will possibly texture the mouth on pacman with a future function 
-{
-	const int SEGMENTS = 32;
-	const float PI = 3.14159265359;
-
-	glPushMatrix();
-	glTranslatef(pacmanX, pacmanY, 0);
-	glBegin(GL_TRIANGLE_FAN);
-	glColor3f(1.0, 1.0, 0.0); // yellow color
-	glVertex3f(0.0, 0.0, 0.0);
-	for (int i = 0; i <= SEGMENTS; i++)
-	{
-		float angle = PI * 2 * (float)i / (float)SEGMENTS;
-		float x = cos(angle);
-		float y = sin(angle);
-		glVertex3f(x * 0.5, y * 0.5, 0.0);
-	}
-	glEnd();
-	glPopMatrix();
-}
-
-void updatePacman(float deltaTime)
-{
-	cout << pacmanGridX << " : " << pacmanGridY << endl;
-	cout << "targetPosX: " << targetPosX << " targetPosY: " << targetPosY << endl;
-	cout << "lastPosX: " << lastPosX << " lastPosY: " << lastPosY << endl;
-	//pacman is being drawn at the 6 location in the maze or his exact coords in the maze: [23][13]
-	//pacmanGridY = (int)(13 + pacmanX);//constantly update his location in the maze/grid by incrementing/decrementing his Y coordinate in the maze by pacman X pixel/drawn coordinates
-	//pacmanGridX = (int)(23 + pacmanY);//constantly update his location in the maze/grid by incrementing/decrementing his X coordinate in the maze by pacman Y pixel/drawn coordinates
-
-	//why increment his Y axis with his X drawn coordinates and vice versa? The maze is being drawn [j][i] instead of [i][j]
-
-	//mouthDirection is being used to figure out which direction will he be/is turning. Will have to replace with a better system after I figure out the issue with the pixel to grid translation 
-	if (mouthDirection == 0)
-	{
-		if (maze[pacmanGridX][pacmanGridY + 1] != Tiles::wall)//check if pacman has hit a wall when going right + 1. '+1' means 1 tile lenght since a tile is long 1. Check drawTiles() for refrence. Will need to include the Tiles::gate aswell here
-		{
-			pacmanX += pacmanVX * deltaTime;// move pacman in the X axis direction by his velocity* deltaTime.deltaTime to make his movement smoother
-			if (abs(pacmanX - lastPosX) >= 1)
-			{
-				targetPosX += turnToX;
-				lastPosX = targetPosX;
-				pacmanGridY += 1;
-			}
-		}
-	}
-
-	if (mouthDirection == 1)
-	{
-		if (maze[pacmanGridX][pacmanGridY - 1] != Tiles::wall)
-		{
-			pacmanX += pacmanVX * deltaTime;
-			if (abs(pacmanX - lastPosX) >= 1)
-			{
-				targetPosX += turnToX;
-				lastPosX = targetPosX;
-				pacmanGridY -= 1;
-			}
-		}
-	}
-
-	if (mouthDirection == 2)
-	{
-		if (maze[pacmanGridX - 1][pacmanGridY] != Tiles::wall)
-		{
-			pacmanY += pacmanVY * deltaTime;//move pacman in the Y axis direction by his velocity * deltaTime. deltaTime to make his movement smoother
-			if (abs(pacmanY - lastPosY) >= 1)
-			{
-				targetPosY += turnToY;
-				lastPosY = targetPosY;
-				pacmanGridX -= 1;
-			}
-		}
-	}
-
-	if (mouthDirection == 3)
-	{
-		if (maze[pacmanGridX + 1][pacmanGridY] != Tiles::wall)
-		{
-			pacmanY += pacmanVY * deltaTime;
-			if (abs(pacmanY - lastPosY) >= 1)
-			{
-				targetPosY += turnToY;
-				lastPosY = targetPosY;
-				pacmanGridX += 1;
-			}
-		}
-	}
-}
+Pacman p;
+Blinky r;
 
 void movePacMan(unsigned char key, int x, int y) 
 {
@@ -143,29 +20,33 @@ void movePacMan(unsigned char key, int x, int y)
 		exit(0);
 		break;
 	case 'd'://right
-		mouthDirection = 0;//rotate mouth to the right inside drawMouth() function
-		pacmanVX = playerSpeed;//set pacman X velocity to 2.5
-		pacmanVY = 0;//set pacman Y velocity to 0
-		turnToX = 1;
-		break;
+		if (maze[p.pacmanGridX][p.pacmanGridY + 1] != Tiles::wall && maze[p.pacmanGridX][p.pacmanGridY + 1] != Tiles::gate)
+		{
+			p.turnTo = { 1, 0 };
+			r.setPath(p.pacmanGridX, p.pacmanGridY);
+			break;
+		}
 	case 'a'://left
-		mouthDirection = 1;//rotate mouth to the left inside drawMouth() function
-		pacmanVX = -playerSpeed;
-		pacmanVY = 0;
-		turnToX = -1;
-		break;
+		if (maze[p.pacmanGridX][p.pacmanGridY - 1] != Tiles::wall && maze[p.pacmanGridX][p.pacmanGridY - 1] != Tiles::gate)
+		{
+			p.turnTo = { -1, 0 };
+			r.setPath(p.pacmanGridX, p.pacmanGridY);
+			break;
+		}
 	case 'w'://up
-		mouthDirection = 2;//rotate mouth to the up inside drawMouth() function
-		pacmanVY = playerSpeed;//set pacman Y velocity to 2.5
-		pacmanVX = 0;//set pacman X velocity to 0
-		turnToY = 1;
-		break;
+		if (maze[p.pacmanGridX - 1][p.pacmanGridY] != Tiles::wall && maze[p.pacmanGridX - 1][p.pacmanGridY] != Tiles::gate)
+		{
+			p.turnTo = { 0, 1 };
+			r.setPath(p.pacmanGridX, p.pacmanGridY);
+			break;
+		}
 	case 's'://down
-		mouthDirection = 3;//rotate mouth to the down inside drawMouth() function
-		pacmanVY = -playerSpeed;
-		pacmanVX = 0;
-		turnToY = -1;
-		break;
+		if (maze[p.pacmanGridX + 1][p.pacmanGridY] != Tiles::wall && maze[p.pacmanGridX + 1][p.pacmanGridY] != Tiles::gate)
+		{
+			p.turnTo = { 0, -1 };
+			r.setPath(p.pacmanGridX, p.pacmanGridY);
+			break;
+		}
 	}
 	glutPostRedisplay();
 }
@@ -173,9 +54,14 @@ void movePacMan(unsigned char key, int x, int y)
 void drawTiles(void)//go through the maze and then at certain locations draw certain shapes
 {
 	glPushMatrix();
-	glTranslatef(pacmanXStart, -pacmanYStart, 0);
-	drawMouth();
-	drawPacMan();
+	glTranslatef(p.pacmanXStart, -p.pacmanYStart, 0);
+	p.drawMouth();
+	p.drawPacMan();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(r.blinkyXStart, -r.blinkyYStart, 0);
+	r.drawBlinky();
 	glPopMatrix();
 
     for (int i = 0; i < mapHeight; i++)
@@ -190,50 +76,50 @@ void drawTiles(void)//go through the maze and then at certain locations draw cer
 				//the code below draws 6 squares that represent each side of a cube, each one colored with a teal color except the top square being blue(glColor3f(0, 0, 1))
 				glColor3f(0, 0, 1);
 				glBegin(GL_POLYGON);
-				glVertex3f(-0.5, -0.5, 0.5);
-				glVertex3f(0.5, -0.5, 0.5);
-				glVertex3f(0.5, 0.5, 0.5);
-				glVertex3f(-0.5, 0.5, 0.5);
+				glVertex3f(-0.500000, -0.500000, 0.500000);
+				glVertex3f(0.500000, -0.500000, 0.500000);
+				glVertex3f(0.500000, 0.500000, 0.500000);
+				glVertex3f(-0.500000, 0.500000, 0.500000);
 				glEnd();
 
 				glColor3f(0, 128, 128);
 				glBegin(GL_POLYGON);
-				glVertex3f(-0.5, 0.5, 0.5);
-				glVertex3f(0.5, 0.5, 0.5);
-				glVertex3f(0.5, 0.5, -0.5);
-				glVertex3f(-0.5, -0.5, -0.5);
+				glVertex3f(-0.500000, 0.500000, 0.500000);
+				glVertex3f(0.500000, 0.500000, 0.500000);
+				glVertex3f(0.500000, 0.500000, -0.500000);
+				glVertex3f(-0.500000, -0.500000, -0.500000);
 				glEnd();
 
 				glColor3f(0, 128, 128);
 				glBegin(GL_POLYGON);
-				glVertex3f(-0.5, 0.5, -0.5);
-				glVertex3f(0.5, 0.5, -0.5);
-				glVertex3f(0.5, -0.5, -0.5);
-				glVertex3f(-0.5, -0.5, -0.5);
+				glVertex3f(-0.500000, 0.500000, -0.500000);
+				glVertex3f(0.500000, 0.500000, -0.500000);
+				glVertex3f(0.500000, -0.500000, -0.500000);
+				glVertex3f(-0.500000, -0.500000, -0.500000);
 				glEnd();
 
 				glColor3f(0, 128, 128);
 				glBegin(GL_POLYGON);
-				glVertex3f(-0.5, -0.5, -0.5);
-				glVertex3f(0.5, -0.5, -0.5);
-				glVertex3f(0.5, -0.5, 0.5);
-				glVertex3f(-0.5, -0.5, 0.5);
+				glVertex3f(-0.500000, -0.500000, -0.500000);
+				glVertex3f(0.500000, -0.500000, -0.500000);
+				glVertex3f(0.500000, -0.500000, 0.500000);
+				glVertex3f(-0.500000, -0.500000, 0.500000);
 				glEnd();
 
 				glColor3f(0, 128, 128);
 				glBegin(GL_POLYGON);
-				glVertex3f(0.5, -0.5, 0.5);
-				glVertex3f(0.5, -0.5, -0.5);
-				glVertex3f(0.5, 0.5, -0.5);
-				glVertex3f(0.5, 0.5, 0.5);
+				glVertex3f(0.500000, -0.500000, 0.500000);
+				glVertex3f(0.500000, -0.500000, -0.500000);
+				glVertex3f(0.500000, 0.500000, -0.500000);
+				glVertex3f(0.500000, 0.500000, 0.500000);
 				glEnd();
 				
 				glColor3f(0, 128, 128);
 				glBegin(GL_POLYGON);
-				glVertex3f(-0.5, -0.5, -0.5);
-				glVertex3f(-0.5, -0.5, 0.5);
-				glVertex3f(-0.5, 0.5, 0.5);
-				glVertex3f(-0.5, 0.5, -0.5);
+				glVertex3f(-0.500000, -0.500000, -0.500000);
+				glVertex3f(-0.500000, -0.500000, 0.500000);
+				glVertex3f(-0.500000, 0.500000, 0.500000);
+				glVertex3f(-0.500000, 0.500000, -0.500000);
 				glEnd();
 			}
 			if (maze[i][j] == 1) 
@@ -283,9 +169,8 @@ void display(void)
     glTranslatef(-13.5, 15, -30);
 
     drawTiles(); 
-	updatePacman(deltaTime);
-
-
+	p.updatePacman(deltaTime);
+	r.updateBlinky(deltaTime);
     glutSwapBuffers();
 }
 
@@ -303,6 +188,11 @@ void saveTileLocation()//set all of the tile location
 	{
 		for (int j = 0; j < mapWidth; j++)
 		{
+			if (maze[i][j] == 5)
+			{
+				maze[i][j] = Tiles::corner_tile;
+			}
+
 			if (maze[i][j] == 4)
 			{
 				maze[i][j] = Tiles::wall;
@@ -344,4 +234,39 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
+
+//cout << pacmanGridX << " : " << pacmanGridY << endl;
+//cout << "pacmanX: " << pacmanX << " pacmanY: " << pacmanY << endl;
+//cout << "int pacmanX: " << (int)pacmanX << " int pacmanY: " << (int)pacmanY << endl;
+//cout << "targetPosX: " << targetPosX << " targetPosY: " << targetPosY << endl;
+//cout << "lastPosX: " << lastPosX << " lastPosY: " << lastPosY << endl;
+//cout << "boolX: " << currentAxis.x << " boolY: " << currentAxis.y << endl;
+//cout << "prevX: " << previousAxisX << " prevY: " << previousAxisY << endl;
+
+
+
+//if (maze[pacmanGridX][pacmanGridY + turnTo.x] != Tiles::wall)
+//{
+//	pacmanX += pacmanVel.x * deltaTime;
+//	if (abs(pacmanX - lastPosX) >= 1)
+//	{
+//		pacmanX = int(pacmanX);
+//		targetPosX += turnTo.x;
+//		lastPosX = targetPosX;
+//		pacmanGridY += turnTo.x;
+//	}
+//}
+
+//if (maze[pacmanGridX + turnTo.y][pacmanGridY] != Tiles::wall)
+//{
+//	pacmanY += pacmanVel.y * deltaTime;
+//	if (abs(pacmanY - lastPosY) >= 1)
+//	{
+//		pacmanY = int(pacmanY);
+//		targetPosY += turnTo.y;
+//		lastPosY = targetPosY;
+//		pacmanGridX -= turnTo.y;
+//	}
+//}
 
