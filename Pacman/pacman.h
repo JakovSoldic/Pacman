@@ -4,12 +4,9 @@
 #include <cmath>
 #include <cstdint>
 
-#include "Red.h"
-
 class Pacman
 {
 public:
-
     struct Point {
         int x;
         int y;
@@ -23,9 +20,9 @@ public:
     float targetPosX;
     float targetPosY;
 
-    float pacmanX = 0, pacmanY = 0;//pacmans drawn pixel coordinates/the center of pacman when using translatef(pacmanX, pacmanY, 0)
-    int pacmanGridX = pacmanYStart, pacmanGridY = pacmanXStart;//pacmans grid location
-    float playerSpeed = 4.0f; // tiles per second
+    float pacmanX = 0, pacmanY = 0;
+    int pacmanGridX = pacmanYStart, pacmanGridY = pacmanXStart;
+    float playerSpeed = 4.0f;
 
     void drawMouth();
     void drawPacMan();

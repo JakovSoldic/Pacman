@@ -8,6 +8,8 @@ using namespace std;
 
 #include "pacman.h"
 #include "globalVariables.h"
+//#include "Red.h"
+//Blinky blinky;
 
 void Pacman::drawMouth()//draw a mouth on pacmans location(basically a black triangle). Might possibly change this in the future
 {
@@ -74,7 +76,6 @@ float Pacman::constantInterpolation(float startPoint, float endPoint, float spee
 
 void Pacman::updatePacman(float deltaTime)
 {
-	Blinky blinky;
 	pacmanX = constantInterpolation(pacmanX, targetPosX, playerSpeed, deltaTime);
 	if (maze[pacmanGridX][pacmanGridY + turnTo.x] != Tiles::wall && maze[pacmanGridX][pacmanGridY + turnTo.x] != Tiles::gate)
 	{

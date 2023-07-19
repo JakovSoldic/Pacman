@@ -18,7 +18,7 @@ public:
 
     bool isValidPosition(int x, int y) 
     {
-        return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
+        return x >= 0 && x < mapHeight && y >= 0 && y < mapWidth;
     }
 
     vector<Node*> getNeighbors(Node* node) 
@@ -83,11 +83,11 @@ public:
             }
         }
         // Print the path
-        //cout << "Path: ";
-        //for (int i = path.size() - 1; i >= 0; i--) {
-        //    cout << "(" << path[i]->x << ", " << path[i]->y << ") ";
-        //}
-        //cout << endl;
+        cout << "Path: ";
+        for (int i = path.size() - 1; i >= 0; i--) {
+            cout << "(" << path[i]->x << ", " << path[i]->y << ") ";
+        }
+        cout << endl;
         //Clean up memory
         while (!queue.empty()) 
         {

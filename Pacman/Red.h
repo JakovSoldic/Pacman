@@ -7,26 +7,32 @@
 class Blinky
 {
 public:
-
-    struct Point {
-        int x;
-        int y;
-    };
-
-    Point turnTo = { 0, 0 };
-
     const int blinkyXStart = 13;
     const int blinkyYStart = 11;
 
-    float blinkyTargetPosX;
-    float blinkyTargetPosY;
-
-    float blinkyX = 0, blinkyY = 0;//pacmans drawn pixel coordinates/the center of pacman when using translatef(pacmanX, pacmanY, 0)
-    int blinkyGridX = blinkyYStart, blinkyGridY = blinkyXStart;//pacmans grid location
-    float blinkySpeed = 4.0f; // tiles per second
+    float blinkyX = 0, blinkyY = 0;
+    int blinkyGridX = blinkyYStart, blinkyGridY = blinkyXStart;
+    float blinkySpeed = 4.0f;
 
     vector<std::pair<int, int>> pathCoordinates;
     int counter = 0;
+    bool animationComplete = true;
+
+    int targetGridX = 0;
+    int targetGridY = 0;
+
+    float targetPosX = 0;
+    float targetPosY = 0;
+
+    int previousTargetX = 0;
+    int previousTargetY = 0;
+
+    int x = 0;
+    int y = 0;
+
+    bool isDead = false;
+    bool isFrightened = false;
+
     //void drawMouth();
     void drawBlinky();
     float constantInterpolation(float startPoint, float endPoint, float speed, float time);

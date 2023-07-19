@@ -23,28 +23,24 @@ void movePacMan(unsigned char key, int x, int y)
 		if (maze[p.pacmanGridX][p.pacmanGridY + 1] != Tiles::wall && maze[p.pacmanGridX][p.pacmanGridY + 1] != Tiles::gate)
 		{
 			p.turnTo = { 1, 0 };
-			r.setPath(p.pacmanGridX, p.pacmanGridY);
 			break;
 		}
 	case 'a'://left
 		if (maze[p.pacmanGridX][p.pacmanGridY - 1] != Tiles::wall && maze[p.pacmanGridX][p.pacmanGridY - 1] != Tiles::gate)
 		{
 			p.turnTo = { -1, 0 };
-			r.setPath(p.pacmanGridX, p.pacmanGridY);
 			break;
 		}
 	case 'w'://up
 		if (maze[p.pacmanGridX - 1][p.pacmanGridY] != Tiles::wall && maze[p.pacmanGridX - 1][p.pacmanGridY] != Tiles::gate)
 		{
 			p.turnTo = { 0, 1 };
-			r.setPath(p.pacmanGridX, p.pacmanGridY);
 			break;
 		}
 	case 's'://down
 		if (maze[p.pacmanGridX + 1][p.pacmanGridY] != Tiles::wall && maze[p.pacmanGridX + 1][p.pacmanGridY] != Tiles::gate)
 		{
 			p.turnTo = { 0, -1 };
-			r.setPath(p.pacmanGridX, p.pacmanGridY);
 			break;
 		}
 	}
@@ -169,7 +165,10 @@ void display(void)
     glTranslatef(-13.5, 15, -30);
 
     drawTiles(); 
+
 	p.updatePacman(deltaTime);
+
+	r.setPath(p.pacmanGridX, p.pacmanGridY);
 	r.updateBlinky(deltaTime);
     glutSwapBuffers();
 }
@@ -234,39 +233,3 @@ int main(int argc, char** argv)
 
     return 0;
 }
-
-
-//cout << pacmanGridX << " : " << pacmanGridY << endl;
-//cout << "pacmanX: " << pacmanX << " pacmanY: " << pacmanY << endl;
-//cout << "int pacmanX: " << (int)pacmanX << " int pacmanY: " << (int)pacmanY << endl;
-//cout << "targetPosX: " << targetPosX << " targetPosY: " << targetPosY << endl;
-//cout << "lastPosX: " << lastPosX << " lastPosY: " << lastPosY << endl;
-//cout << "boolX: " << currentAxis.x << " boolY: " << currentAxis.y << endl;
-//cout << "prevX: " << previousAxisX << " prevY: " << previousAxisY << endl;
-
-
-
-//if (maze[pacmanGridX][pacmanGridY + turnTo.x] != Tiles::wall)
-//{
-//	pacmanX += pacmanVel.x * deltaTime;
-//	if (abs(pacmanX - lastPosX) >= 1)
-//	{
-//		pacmanX = int(pacmanX);
-//		targetPosX += turnTo.x;
-//		lastPosX = targetPosX;
-//		pacmanGridY += turnTo.x;
-//	}
-//}
-
-//if (maze[pacmanGridX + turnTo.y][pacmanGridY] != Tiles::wall)
-//{
-//	pacmanY += pacmanVel.y * deltaTime;
-//	if (abs(pacmanY - lastPosY) >= 1)
-//	{
-//		pacmanY = int(pacmanY);
-//		targetPosY += turnTo.y;
-//		lastPosY = targetPosY;
-//		pacmanGridX -= turnTo.y;
-//	}
-//}
-
