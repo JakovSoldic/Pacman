@@ -3,7 +3,6 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
-
 class Pacman
 {
 public:
@@ -23,6 +22,12 @@ public:
     float pacmanX = 0, pacmanY = 0;
     int pacmanGridX = pacmanYStart, pacmanGridY = pacmanXStart;
     float playerSpeed = 4.0f;
+
+    float timer = 0;
+
+    bool ateBigPellet = false;
+
+    float portalX = 0;
 
     void drawMouth();
     void drawPacMan();

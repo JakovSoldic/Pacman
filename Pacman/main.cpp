@@ -152,6 +152,10 @@ void drawTiles(void)//go through the maze and then at certain locations draw cer
     }
 }
 
+void resetFrighten(int value) {
+	p.ateBigPellet = false;
+}
+
 void display(void) 
 {
 	int currentTime = glutGet(GLUT_ELAPSED_TIME);
@@ -165,10 +169,13 @@ void display(void)
     glTranslatef(-13.5, 15, -30);
 
     drawTiles(); 
-
 	p.updatePacman(deltaTime);
+	if (p.ateBigPellet)
+		glutTimerFunc(5000, resetFrighten, 0);
 
-	r.setPath(p.pacmanGridX, p.pacmanGridY);
+	r.checkCollision(p.pacmanGridX, p.pacmanGridY);
+	r.setPath(p.pacmanGridX, p.pacmanGridY, p.ateBigPellet);
+	r.setBlinkySpeed();
 	r.updateBlinky(deltaTime);
     glutSwapBuffers();
 }
@@ -189,7 +196,7 @@ void saveTileLocation()//set all of the tile location
 		{
 			if (maze[i][j] == 5)
 			{
-				maze[i][j] = Tiles::corner_tile;
+				maze[i][j] = Tiles::teleport_tile;
 			}
 
 			if (maze[i][j] == 4)

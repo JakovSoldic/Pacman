@@ -12,5 +12,5 @@ enum Tiles {
     big_pellet,//number 2 in the maze
     gate,//number 3 in the maze
     wall,//number 4 in the maze
-    corner_tile,
+    teleport_tile,//number 5 in the maze
 };

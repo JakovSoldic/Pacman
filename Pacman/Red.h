@@ -2,7 +2,6 @@
 #include <vector>
 #include <array>
 #include <cmath>
-#include <cstdint>
 
 class Blinky
 {
@@ -27,15 +26,25 @@ public:
     int previousTargetX = 0;
     int previousTargetY = 0;
 
+    int randomGridX = 0;
+    int randomGridY = 0;
+
     int x = 0;
     int y = 0;
 
     bool isDead = false;
     bool isFrightened = false;
+    bool hasReachedTarget = true;
+    bool hasReachedHome = true;
 
-    //void drawMouth();
     void drawBlinky();
     float constantInterpolation(float startPoint, float endPoint, float speed, float time);
-    void setPath(int targetX, int targetY);
+    void getPathFrightened(int targetX, int targetY);
+    void getPathDead(int targetX, int targetY);
+    void getPathChase(int targetX, int targetY);
+    void setPath(int pacmanTargetX, int pacmanTargetY, bool status);
     void updateBlinky(float deltaTime);
+    void eatenBigPellet();
+    void setBlinkySpeed();
+    void checkCollision(int targetX, int targetY);
 };

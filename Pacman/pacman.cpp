@@ -1,6 +1,8 @@
 #include <iostream>
 #include <windows.h>
 #include <stdio.h>
+#include <chrono>
+#include <thread>
 using namespace std;
 
 #include <GL/GL.h>
@@ -8,8 +10,9 @@ using namespace std;
 
 #include "pacman.h"
 #include "globalVariables.h"
-//#include "Red.h"
-//Blinky blinky;
+
+#include "Red.h"
+static Blinky r;
 
 void Pacman::drawMouth()//draw a mouth on pacmans location(basically a black triangle). Might possibly change this in the future
 {
@@ -104,5 +107,24 @@ void Pacman::updatePacman(float deltaTime)
 	if (maze[pacmanGridX][pacmanGridY] == Tiles::big_pellet)
 	{
 		maze[pacmanGridX][pacmanGridY] = Tiles::empty_space;
+		ateBigPellet = true;
+	}
+
+	if (maze[pacmanGridX][pacmanGridY] == Tiles::teleport_tile)
+	{
+		if (pacmanGridX == 14 && pacmanGridY == 0)
+		{
+			pacmanGridX = 14;
+			pacmanGridY = 25;
+			pacmanX = 13;
+			targetPosX = 12;
+		}
+		else if (pacmanGridX == 14 && pacmanGridY == 27)
+		{
+			pacmanGridX = 14;
+			pacmanGridY = 2;
+			pacmanX = -12;
+			targetPosX = -11;
+		}
 	}
 }
