@@ -1,8 +1,17 @@
+#include <cstdlib>
+#include <iostream>
+
 #include "globalVariables.h"
 const int mapWidth = 28;
 const int mapHeight = 31;
 
 int previousTime = 0;
+
+bool isScatter = false;
+int scatterCounter = 0;
+
+int ghostHomeX = 13;
+int ghostHomeY = 13;
 
 extern int maze[mapHeight][mapWidth] = {
 	{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
@@ -37,3 +46,19 @@ extern int maze[mapHeight][mapWidth] = {
 	{4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4},
 	{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
 };
+
+float constantInterpolation(float startPoint, float endPoint, float speed, float time)
+{
+	float distance = endPoint - startPoint;
+	float totalDuration = abs(distance) / speed;
+
+	if (time >= totalDuration)
+	{
+		return endPoint;
+	}
+	else
+	{
+		float t = time / totalDuration;
+		return startPoint + (distance * t);
+	}
+}

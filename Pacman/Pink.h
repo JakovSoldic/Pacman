@@ -3,15 +3,15 @@
 #include <array>
 #include <cmath>
 
-class Blinky
+class Pinky
 {
 public:
-    const int blinkyXStart = 13;
-    const int blinkyYStart = 11;
+    const int pinkyXStart = 13;
+    const int pinkyYStart = 14;
 
-    float blinkyX = 0, blinkyY = 0;
-    int blinkyGridX = blinkyYStart, blinkyGridY = blinkyXStart;
-    float blinkySpeed = 4.0f;
+    float pinkyX = 0, pinkyY = 0;
+    int pinkyGridX = pinkyYStart, pinkyGridY = pinkyXStart;
+    float pinkySpeed = 4.0f;
 
     vector<pair<int, int>> pathCoordinates;
     int counter = 0;
@@ -29,8 +29,8 @@ public:
     int randomGridX = 0;
     int randomGridY = 0;
 
-    int blinkyCornerX = 1;
-    int blinkyCornerY = 1;
+    int pinkyCornerX = 1;
+    int pinkyCornerY = 26;
 
     int x = 0;
     int y = 0;
@@ -42,12 +42,12 @@ public:
     bool hasReachedCorner = true;
 
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
-    void drawBlinky();
+    void drawPinky();
     void getPathFrightened(int targetX, int targetY);
     void getPathDead(int targetX, int targetY);
     void getPathChase(int targetX, int targetY);
-    void setPath(int pacmanTargetX, int pacmanTargetY, bool status);
-    void updateBlinky(float deltaTime);
-    void setBlinkySpeed();
+    void setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacmanDirectionX, int pacmanDirectionY);
+    void updatePinky(float deltaTime);
+    void setPinkySpeed();
     void checkCollision(int targetX, int targetY);
 };

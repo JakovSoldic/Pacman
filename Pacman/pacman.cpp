@@ -11,10 +11,7 @@ using namespace std;
 #include "pacman.h"
 #include "globalVariables.h"
 
-#include "Red.h"
-static Blinky r;
-
-void Pacman::drawMouth()//draw a mouth on pacmans location(basically a black triangle). Might possibly change this in the future
+void Pacman::drawMouth()
 {
 	glPushMatrix();
 	glTranslatef(pacmanX, pacmanY, 0);
@@ -40,7 +37,7 @@ void Pacman::drawMouth()//draw a mouth on pacmans location(basically a black tri
 	glPopMatrix();
 }
 
-void Pacman::drawPacMan()//draw a circle shape. Will have to make mouth within this function and then just rorate the whole pacman when he moves or will possibly texture the mouth on pacman with a future function 
+void Pacman::drawPacMan()
 {
 	const int SEGMENTS = 32;
 	const float PI = 3.14159265359;
@@ -48,7 +45,7 @@ void Pacman::drawPacMan()//draw a circle shape. Will have to make mouth within t
 	glPushMatrix();
 	glTranslatef(pacmanX, pacmanY, 0);
 	glBegin(GL_TRIANGLE_FAN);
-	glColor3f(1.0, 1.0, 0.0); // yellow color
+	glColor3f(1.0, 1.0, 0.0);
 	glVertex3f(0.0, 0.0, 0.0);
 	for (int i = 0; i <= SEGMENTS; i++)
 	{
@@ -59,22 +56,6 @@ void Pacman::drawPacMan()//draw a circle shape. Will have to make mouth within t
 	}
 	glEnd();
 	glPopMatrix();
-}
-
-float Pacman::constantInterpolation(float startPoint, float endPoint, float speed, float time)
-{
-	float distance = endPoint - startPoint;
-	float totalDuration = abs(distance) / speed;
-
-	if (time >= totalDuration)
-	{
-		return endPoint;  // Reached the endpoint
-	}
-	else
-	{
-		float t = time / totalDuration;
-		return startPoint + (distance * t);
-	}
 }
 
 void Pacman::updatePacman(float deltaTime)

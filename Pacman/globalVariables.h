@@ -6,6 +6,12 @@ extern int maze[][28];
 
 extern int previousTime;
 
+extern bool isScatter;
+extern int scatterCounter;
+
+extern int ghostHomeX;
+extern int ghostHomeY;
+
 enum Tiles {
     empty_space,//number 0 in the maze
     small_pellet,//number 1 in the maze
@@ -14,3 +20,5 @@ enum Tiles {
     wall,//number 4 in the maze
     teleport_tile,//number 5 in the maze
 };
+
+float constantInterpolation(float startPoint, float endPoint, float speed, float time);

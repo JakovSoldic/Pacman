@@ -8,10 +8,12 @@ using namespace std;
 
 #include "pacman.h"
 #include "Red.h"
+#include "Pink.h"
 #include "globalVariables.h"
 
-Pacman p;
+Pacman player;
 Blinky r;
+Pinky p;
 
 void movePacMan(unsigned char key, int x, int y) 
 {
@@ -20,27 +22,27 @@ void movePacMan(unsigned char key, int x, int y)
 		exit(0);
 		break;
 	case 'd'://right
-		if (maze[p.pacmanGridX][p.pacmanGridY + 1] != Tiles::wall && maze[p.pacmanGridX][p.pacmanGridY + 1] != Tiles::gate)
+		if (maze[player.pacmanGridX][player.pacmanGridY + 1] != Tiles::wall && maze[player.pacmanGridX][player.pacmanGridY + 1] != Tiles::gate)
 		{
-			p.turnTo = { 1, 0 };
+			player.turnTo = { 1, 0 };
 			break;
 		}
 	case 'a'://left
-		if (maze[p.pacmanGridX][p.pacmanGridY - 1] != Tiles::wall && maze[p.pacmanGridX][p.pacmanGridY - 1] != Tiles::gate)
+		if (maze[player.pacmanGridX][player.pacmanGridY - 1] != Tiles::wall && maze[player.pacmanGridX][player.pacmanGridY - 1] != Tiles::gate)
 		{
-			p.turnTo = { -1, 0 };
+			player.turnTo = { -1, 0 };
 			break;
 		}
 	case 'w'://up
-		if (maze[p.pacmanGridX - 1][p.pacmanGridY] != Tiles::wall && maze[p.pacmanGridX - 1][p.pacmanGridY] != Tiles::gate)
+		if (maze[player.pacmanGridX - 1][player.pacmanGridY] != Tiles::wall && maze[player.pacmanGridX - 1][player.pacmanGridY] != Tiles::gate)
 		{
-			p.turnTo = { 0, 1 };
+			player.turnTo = { 0, 1 };
 			break;
 		}
 	case 's'://down
-		if (maze[p.pacmanGridX + 1][p.pacmanGridY] != Tiles::wall && maze[p.pacmanGridX + 1][p.pacmanGridY] != Tiles::gate)
+		if (maze[player.pacmanGridX + 1][player.pacmanGridY] != Tiles::wall && maze[player.pacmanGridX + 1][player.pacmanGridY] != Tiles::gate)
 		{
-			p.turnTo = { 0, -1 };
+			player.turnTo = { 0, -1 };
 			break;
 		}
 	}
@@ -50,14 +52,19 @@ void movePacMan(unsigned char key, int x, int y)
 void drawTiles(void)//go through the maze and then at certain locations draw certain shapes
 {
 	glPushMatrix();
-	glTranslatef(p.pacmanXStart, -p.pacmanYStart, 0);
-	p.drawMouth();
-	p.drawPacMan();
+	glTranslatef(player.pacmanXStart, -player.pacmanYStart, 0);
+	player.drawMouth();
+	player.drawPacMan();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(r.blinkyXStart, -r.blinkyYStart, 0);
 	r.drawBlinky();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(p.pinkyXStart, -p.pinkyYStart, 0);
+	p.drawPinky();
 	glPopMatrix();
 
     for (int i = 0; i < mapHeight; i++)
@@ -152,8 +159,28 @@ void drawTiles(void)//go through the maze and then at certain locations draw cer
     }
 }
 
+void toggleScatter(int value)
+{
+	isScatter = !isScatter;
+
+	if (scatterCounter < 2)
+	{
+		scatterCounter++;
+		glutTimerFunc(5000, toggleScatter, 0);
+	}
+}
+
+void startScatter()
+{
+	if (scatterCounter == 0)
+	{
+		scatterCounter++;
+		glutTimerFunc(14000, toggleScatter, 0);
+	}
+}
+
 void resetFrighten(int value) {
-	p.ateBigPellet = false;
+	player.ateBigPellet = false;
 }
 
 void display(void) 
@@ -169,15 +196,24 @@ void display(void)
     glTranslatef(-13.5, 15, -30);
 
     drawTiles(); 
-	p.updatePacman(deltaTime);
-	if (p.ateBigPellet)
+
+	//startScatter();
+
+	player.updatePacman(deltaTime);
+	if (player.ateBigPellet)
 		glutTimerFunc(5000, resetFrighten, 0);
 
-	r.checkCollision(p.pacmanGridX, p.pacmanGridY);
-	r.setPath(p.pacmanGridX, p.pacmanGridY, p.ateBigPellet);
+	r.checkCollision(player.pacmanGridX, player.pacmanGridY);
+	r.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet);
 	r.setBlinkySpeed();
 	r.updateBlinky(deltaTime);
-    glutSwapBuffers();
+
+	p.checkCollision(player.pacmanGridX, player.pacmanGridY);
+	p.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet, player.turnTo.x, player.turnTo.y);
+	p.setPinkySpeed();
+	p.updatePinky(deltaTime);
+
+	glutSwapBuffers();
 }
 
 void reshape(int w, int h) {

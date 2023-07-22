@@ -16,8 +16,8 @@ public:
     const int pacmanXStart = 13;
     const int pacmanYStart = 23;
 
-    float targetPosX;
-    float targetPosY;
+    float targetPosX = 0;
+    float targetPosY = 0;
 
     float pacmanX = 0, pacmanY = 0;
     int pacmanGridX = pacmanYStart, pacmanGridY = pacmanXStart;
@@ -27,10 +27,7 @@ public:
 
     bool ateBigPellet = false;
 
-    float portalX = 0;
-
     void drawMouth();
     void drawPacMan();
-    float constantInterpolation(float startPoint, float endPoint, float speed, float time);
     void updatePacman(float deltaTime);
 };
