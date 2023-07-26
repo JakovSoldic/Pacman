@@ -7,13 +7,13 @@ using namespace std;
 #include <GL/GL.h>
 #include <GL/freeglut.h>
 
-#include "Red.h"
+#include "Orange.h"
 #include "globalVariables.h"
 #include "BFS.cpp"
 
-BFS bfs1;
+BFS bfs4;
 
-void Blinky::drawEllipse(float centerX, float centerY, float radiusX, float radiusY)
+void Clyde::drawEllipse(float centerX, float centerY, float radiusX, float radiusY)
 {
 	const int SEGMENTS = 64;
 
@@ -28,14 +28,14 @@ void Blinky::drawEllipse(float centerX, float centerY, float radiusX, float radi
 	glEnd();
 }
 
-void Blinky::drawBlinky()
+void Clyde::drawClyde()
 {
 
 	const int SEGMENTS = 32;
 	const float PI = 3.14159265359;
 
 	glPushMatrix();
-	glTranslatef(blinkyX, blinkyY, 0);
+	glTranslatef(clydeX, clydeY, 0);
 	glPointSize(4);
 	glBegin(GL_POINTS);
 	glColor3f(0.0, 0.0, 1.0);
@@ -54,7 +54,7 @@ void Blinky::drawBlinky()
 	else if (isDead)
 		glColor3f(0.5, 0.5, 0.5);
 	else
-		glColor3f(1.0, 0.0, 0.0);
+		glColor3f(1.0, 0.65, 0.0);
 	glVertex3f(0.0, 0.0, 0.0);
 	for (int i = 0; i <= SEGMENTS; i++)
 	{
@@ -69,7 +69,7 @@ void Blinky::drawBlinky()
 	else if (isDead)
 		glColor3f(0.5, 0.5, 0.5);
 	else
-		glColor3f(1.0, 0.0, 0.0);
+		glColor3f(1.0, 0.65, 0.0);
 	glBegin(GL_POLYGON); // start drawing a polygon
 	glVertex2f(-0.4f, -0.30f); // lower left vertex
 	glVertex2f(0.4f, -0.30f); // lower right vertex
@@ -83,12 +83,21 @@ void Blinky::drawBlinky()
 	glPopMatrix();
 }
 
-void Blinky::getPathFrightened(int targetX, int targetY)
+bool Clyde::isWithinRadius(int pacmanGridX, int pacmanGridY, int clydeGridX, int clydeGridY, int radius)
+{
+	int distanceX = abs(pacmanGridX - clydeGridX);
+	int distanceY = abs(pacmanGridY - clydeGridY);
+	int distance = distanceX + distanceY;
+
+	return distance <= radius;
+}
+
+void Clyde::getPathFrightened(int targetX, int targetY)
 {
 	pathCoordinates.clear();
 	counter = 0;
-	
-	vector<BFS::Node*> path = bfs1.bfs(blinkyGridX, blinkyGridY, targetX, targetY, 0, 0);
+
+	vector<BFS::Node*> path = bfs4.bfs(clydeGridX, clydeGridY, targetX, targetY, 0, 0);
 	reverse(path.begin(), path.end());
 
 	for (BFS::Node* node : path) {
@@ -96,12 +105,12 @@ void Blinky::getPathFrightened(int targetX, int targetY)
 	}
 }
 
-void Blinky::getPathDead(int targetX, int targetY)
+void Clyde::getPathDead(int targetX, int targetY)
 {
 	pathCoordinates.clear();
 	counter = 0;
-	
-	vector<BFS::Node*> path = bfs1.bfs(blinkyGridX, blinkyGridY, targetX, targetY, 0, 0);
+
+	vector<BFS::Node*> path = bfs4.bfs(clydeGridX, clydeGridY, targetX, targetY, 0, 0);
 	reverse(path.begin(), path.end());
 
 	for (BFS::Node* node : path) {
@@ -109,13 +118,13 @@ void Blinky::getPathDead(int targetX, int targetY)
 	}
 }
 
-void Blinky::getPathChase(int targetX, int targetY)
+void Clyde::getPathChase(int targetX, int targetY)
 {
 	if (targetX != previousTargetX || targetY != previousTargetY) {
 		pathCoordinates.clear();
 		counter = 0;
 
-		vector<BFS::Node*> path = bfs1.bfs(blinkyGridX, blinkyGridY, targetX, targetY, prevGridX, prevGridY);
+		vector<BFS::Node*> path = bfs4.bfs(clydeGridX, clydeGridY, targetX, targetY, prevGridX, prevGridY);
 		reverse(path.begin(), path.end());
 
 		for (BFS::Node* node : path) {
@@ -127,11 +136,11 @@ void Blinky::getPathChase(int targetX, int targetY)
 	}
 }
 
-void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
+void Clyde::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 {
-	if(!isDead)
+	if (!isDead)
 		isFrightened = status;
-	
+
 	if (isDead)
 	{
 		if (hasReachedHome)
@@ -140,7 +149,7 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 			hasReachedHome = false;
 		}
 
-		if (blinkyGridX == ghostHomeX && blinkyGridY == ghostHomeY)
+		if (clydeGridX == ghostHomeX && clydeGridY == ghostHomeY)
 		{
 			isDead = false;
 			hasReachedTarget = true;
@@ -149,23 +158,23 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 		}
 
 	}
-	
+
 	if (isFrightened && !isDead)
 	{
 		if (hasReachedTarget)
 		{
 			srand(static_cast<unsigned>(time(0)));
-			do 
+			do
 			{
-				randomGridX = rand() % mapWidth;
-				randomGridY = rand() % mapHeight;
+				randomGridX = rand() % (mapHeight - 2) + 1;
+				randomGridY = rand() % (mapWidth - 2) + 1;
 			} while (maze[randomGridX][randomGridY] == Tiles::wall);
 
 			getPathFrightened(randomGridX, randomGridY);
 			hasReachedTarget = false;
 		}
 
-		if (blinkyGridX == randomGridX && blinkyGridY == randomGridY)
+		if (clydeGridX == randomGridX && clydeGridY == randomGridY)
 		{
 			hasReachedTarget = true;
 		}
@@ -175,47 +184,54 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 	{
 		if (hasReachedCorner)
 		{
-			getPathDead(blinkyCornerX, blinkyCornerY);
+			getPathDead(clydeCornerX, clydeCornerY);
 			hasReachedCorner = false;
 		}
 	}
 
 	if (!isDead && !isFrightened && !isScatter)
 	{
-		if (bfs1.countValidDirections(blinkyGridX, blinkyGridY) >= 3 || bfs1.isCorner(blinkyGridX, blinkyGridY, prevGridX, prevGridY))
+		if (bfs4.countValidDirections(clydeGridX, clydeGridY) >= 3 || bfs4.isCorner(clydeGridX, clydeGridY, prevGridX, prevGridY))
 		{
-			getPathChase(pacmanTargetX, pacmanTargetY);
+			if (isWithinRadius(pacmanTargetX, pacmanTargetY, clydeGridX, clydeGridY, radius))
+			{
+				getPathChase(clydeCornerX, clydeCornerY);
+			}
+			else
+			{
+				getPathChase(pacmanTargetX, pacmanTargetY);
+			}
 		}
 	}
 }
 
-void Blinky::updateBlinky(float deltaTime)
+void Clyde::updateClyde(float deltaTime)
 {
-	if (counter < pathCoordinates.size()) 
+	if (counter < pathCoordinates.size())
 	{
 		if (animationComplete)
 		{
 			x = pathCoordinates[counter].first;
 			y = pathCoordinates[counter].second;
 
-			targetGridX = x - blinkyGridX;
-			targetGridY = y - blinkyGridY;
+			targetGridX = x - clydeGridX;
+			targetGridY = y - clydeGridY;
 
-			targetPosX = blinkyX + targetGridY;
-			targetPosY = blinkyY - targetGridX;
+			targetPosX = clydeX + targetGridY;
+			targetPosY = clydeY - targetGridX;
 			animationComplete = false;
 		}
 
-		blinkyX = constantInterpolation(blinkyX, targetPosX, blinkySpeed, deltaTime);
-		blinkyY = constantInterpolation(blinkyY, targetPosY, blinkySpeed, deltaTime);
+		clydeX = constantInterpolation(clydeX, targetPosX, clydeSpeed, deltaTime);
+		clydeY = constantInterpolation(clydeY, targetPosY, clydeSpeed, deltaTime);
 
-		if (blinkyX == targetPosX && blinkyY == targetPosY)
+		if (clydeX == targetPosX && clydeY == targetPosY)
 		{
-			prevGridX = blinkyGridX;
-			prevGridY = blinkyGridY;
+			prevGridX = clydeGridX;
+			prevGridY = clydeGridY;
 
-			blinkyGridX = x;
-			blinkyGridY = y;
+			clydeGridX = x;
+			clydeGridY = y;
 
 			counter++;
 			animationComplete = true;
@@ -224,21 +240,21 @@ void Blinky::updateBlinky(float deltaTime)
 	}
 }
 
-void Blinky::setBlinkySpeed()
+void Clyde::setClydeSpeed()
 {
 	if (isFrightened)
-		blinkySpeed = 2.0f;
+		clydeSpeed = 2.0f;
 	else if (isDead)
-		blinkySpeed = 6.0f;
+		clydeSpeed = 6.0f;
 	else
-		blinkySpeed = 4.0f;
+		clydeSpeed = 4.0f;
 }
 
-void Blinky::checkCollision(int targetX, int targetY)
+void Clyde::checkCollision(int targetX, int targetY)
 {
 	if (isFrightened)
 	{
-		if (blinkyGridX == targetX && blinkyGridY == targetY)
+		if (clydeGridX == targetX && clydeGridY == targetY)
 		{
 			isDead = true;
 			isFrightened = false;
@@ -247,7 +263,7 @@ void Blinky::checkCollision(int targetX, int targetY)
 
 	if (!isFrightened && !isDead)
 	{
-		if (blinkyGridX == targetX && blinkyGridY == targetY)
+		if (clydeGridX == targetX && clydeGridY == targetY)
 		{
 			std::cout << "Collision detected! Exiting the program." << std::endl;
 			exit(0);

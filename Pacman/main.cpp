@@ -9,11 +9,14 @@ using namespace std;
 #include "pacman.h"
 #include "Red.h"
 #include "Pink.h"
+#include "Orange.h"
 #include "globalVariables.h"
 
 Pacman player;
 Blinky r;
 Pinky p;
+//inky here
+Clyde c;
 
 void movePacMan(unsigned char key, int x, int y) 
 {
@@ -49,7 +52,7 @@ void movePacMan(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
-void drawTiles(void)//go through the maze and then at certain locations draw certain shapes
+void drawTiles(void)
 {
 	glPushMatrix();
 	glTranslatef(player.pacmanXStart, -player.pacmanYStart, 0);
@@ -67,16 +70,22 @@ void drawTiles(void)//go through the maze and then at certain locations draw cer
 	p.drawPinky();
 	glPopMatrix();
 
+	//inky here
+
+	glPushMatrix();
+	glTranslatef(c.clydeXStart, -c.clydeYStart, 0);
+	c.drawClyde();
+	glPopMatrix();
+
     for (int i = 0; i < mapHeight; i++)
     {
         for (int j = 0; j < mapWidth; j++)
         {
 			if (maze[i][j] == 4)
 			{
-				glPushMatrix(); //push the matrix so that our translations only affect this tile
-				glTranslatef(j, -i, 0); //translate the tile to where it should belong
+				glPushMatrix();
+				glTranslatef(j, -i, 0);
 
-				//the code below draws 6 squares that represent each side of a cube, each one colored with a teal color except the top square being blue(glColor3f(0, 0, 1))
 				glColor3f(0, 0, 1);
 				glBegin(GL_POLYGON);
 				glVertex3f(-0.500000, -0.500000, 0.500000);
@@ -148,7 +157,7 @@ void drawTiles(void)//go through the maze and then at certain locations draw cer
 				glPushMatrix();
 				glTranslatef(j, -i, 0);
 
-				glBegin(GL_LINES);//horizontal lines which represent the gate
+				glBegin(GL_LINES);
 				glColor3f(255, 255, 255);
 				glVertex2f(0.5f, 0.5f);
 				glVertex2f(-0.5f, 0.5f);
@@ -208,10 +217,17 @@ void display(void)
 	r.setBlinkySpeed();
 	r.updateBlinky(deltaTime);
 
-	p.checkCollision(player.pacmanGridX, player.pacmanGridY);
-	p.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet, player.turnTo.x, player.turnTo.y);
-	p.setPinkySpeed();
-	p.updatePinky(deltaTime);
+	//p.checkCollision(player.pacmanGridX, player.pacmanGridY);
+	//p.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet, player.turnTo.x, player.turnTo.y);
+	//p.setPinkySpeed();
+	//p.updatePinky(deltaTime);
+
+	//inky here
+
+	c.checkCollision(player.pacmanGridX, player.pacmanGridY);
+	c.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet);
+	c.setClydeSpeed();
+	c.updateClyde(deltaTime);
 
 	glutSwapBuffers();
 }
@@ -224,7 +240,7 @@ void reshape(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-void saveTileLocation()//set all of the tile location
+void saveTileLocation()
 {
 	for (int i = 0; i < mapHeight; i++)
 	{

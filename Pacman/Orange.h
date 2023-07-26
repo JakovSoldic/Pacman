@@ -3,15 +3,16 @@
 #include <array>
 #include <cmath>
 
-class Blinky
+class Clyde
 {
 public:
-    const int blinkyXStart = 13;
-    const int blinkyYStart = 11;
+    const int clydeXStart = 15;
+    const int clydeYStart = 14;
+    const int radius = 8;
 
-    float blinkyX = 0, blinkyY = 0;
-    int blinkyGridX = blinkyYStart, blinkyGridY = blinkyXStart;
-    float blinkySpeed = 4.0f;
+    float clydeX = 0, clydeY = 0;
+    int clydeGridX = clydeYStart, clydeGridY = clydeXStart;
+    float clydeSpeed = 4.0f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -32,8 +33,8 @@ public:
     int randomGridX = 0;
     int randomGridY = 0;
 
-    int blinkyCornerX = 1;
-    int blinkyCornerY = 1;
+    int clydeCornerX = 29;
+    int clydeCornerY = 1;
 
     int x = 0;
     int y = 0;
@@ -45,12 +46,13 @@ public:
     bool hasReachedCorner = true;
 
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
-    void drawBlinky();
+    void drawClyde();
+    bool isWithinRadius(int pacmanGridX, int pacmanGridY, int clydeGridX, int clydeGridY, int radius);
     void getPathFrightened(int targetX, int targetY);
     void getPathDead(int targetX, int targetY);
     void getPathChase(int targetX, int targetY);
     void setPath(int pacmanTargetX, int pacmanTargetY, bool status);
-    void updateBlinky(float deltaTime);
-    void setBlinkySpeed();
+    void updateClyde(float deltaTime);
+    void setClydeSpeed();
     void checkCollision(int targetX, int targetY);
 };
