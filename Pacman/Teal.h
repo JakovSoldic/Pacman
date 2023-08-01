@@ -3,15 +3,15 @@
 #include <array>
 #include <cmath>
 
-class Pinky
+class Inky
 {
 public:
-    const int pinkyXStart = 13;
-    const int pinkyYStart = 14;
+    const int inkyXStart = 14;
+    const int inkyYStart = 14;
 
-    float pinkyX = 0, pinkyY = 0;
-    int pinkyGridX = pinkyYStart, pinkyGridY = pinkyXStart;
-    float pinkySpeed = 4.0f;
+    float inkyX = 0, inkyY = 0;
+    int inkyGridX = inkyYStart, inkyGridY = inkyXStart;
+    float blinkySpeed = 4.0f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -32,8 +32,8 @@ public:
     int randomGridX = 0;
     int randomGridY = 0;
 
-    int pinkyCornerX = 1;
-    int pinkyCornerY = 26;
+    int inkyCornerX = 1;
+    int inkyCornerY = 1;
 
     int x = 0;
     int y = 0;
@@ -45,12 +45,12 @@ public:
     bool hasReachedCorner = true;
 
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
-    void drawPinky();
+    void drawInky();
     void getPathFrightened(int targetX, int targetY);
     void getPathDead(int targetX, int targetY);
     void getPathChase(int targetX, int targetY);
-    void setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacmanDirectionX, int pacmanDirectionY);
-    void updatePinky(float deltaTime);
-    void setPinkySpeed();
+    void setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacmanDirectionX, int pacmanDirectionY, int blinkyGridX, int blinkyGridY);
+    void updateInky(float deltaTime);
+    void setInkySpeed();
     void checkCollision(int targetX, int targetY);
 };

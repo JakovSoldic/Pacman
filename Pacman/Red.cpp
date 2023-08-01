@@ -10,8 +10,10 @@ using namespace std;
 #include "Red.h"
 #include "globalVariables.h"
 #include "BFS.cpp"
+#include "Music.h"
 
 BFS bfs1;
+Music m1;
 
 void Blinky::drawEllipse(float centerX, float centerY, float radiusX, float radiusY)
 {
@@ -155,11 +157,13 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 		if (hasReachedTarget)
 		{
 			srand(static_cast<unsigned>(time(0)));
+			vector<BFS::Node*> path;
 			do 
 			{
-				randomGridX = rand() % mapWidth;
-				randomGridY = rand() % mapHeight;
-			} while (maze[randomGridX][randomGridY] == Tiles::wall);
+				randomGridX = rand() % (mapHeight - 2) + 1;
+				randomGridY = rand() % (mapWidth - 2) + 1;
+				path = bfs1.bfs(blinkyGridX, blinkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
+			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
 			getPathFrightened(randomGridX, randomGridY);
 			hasReachedTarget = false;
@@ -182,7 +186,8 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 
 	if (!isDead && !isFrightened && !isScatter)
 	{
-		if (bfs1.countValidDirections(blinkyGridX, blinkyGridY) >= 3 || bfs1.isCorner(blinkyGridX, blinkyGridY, prevGridX, prevGridY))
+		//if (bfs1.countValidDirections(blinkyGridX, blinkyGridY) >= 3 || bfs1.isCorner(blinkyGridX, blinkyGridY, prevGridX, prevGridY))
+		if (animationComplete)
 		{
 			getPathChase(pacmanTargetX, pacmanTargetY);
 		}
@@ -242,6 +247,8 @@ void Blinky::checkCollision(int targetX, int targetY)
 		{
 			isDead = true;
 			isFrightened = false;
+			score += 200;
+			m1.playAteGhost();
 		}
 	}
 
@@ -249,8 +256,11 @@ void Blinky::checkCollision(int targetX, int targetY)
 	{
 		if (blinkyGridX == targetX && blinkyGridY == targetY)
 		{
-			std::cout << "Collision detected! Exiting the program." << std::endl;
-			exit(0);
+			m1.stopMovementSound();
+			m1.playDeath();
+			currentState = GAME_OVER_MENU;
+			//std::cout << "Collision detected! Exiting the program." << std::endl;
+			//exit(0);
 		}
 	}
 }

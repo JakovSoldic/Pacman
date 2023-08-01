@@ -5,77 +5,41 @@ using namespace std;
 
 #include <GL/GL.h>
 #include <GL/freeglut.h>
-
-#include "pacman.h"
-#include "Red.h"
-#include "Pink.h"
-#include "Orange.h"
 #include "globalVariables.h"
+#include "Music.h"
+#include "Menu.h"
+#include "GameController.h"
 
-Pacman player;
-Blinky r;
-Pinky p;
-//inky here
-Clyde c;
+Music m;
+GameController gc;
+Menu menu;
 
-void movePacMan(unsigned char key, int x, int y) 
+void handleKeyPacman(unsigned char key, int x, int y)
 {
-	switch (key) {
-	case 27:  // escape key
-		exit(0);
-		break;
-	case 'd'://right
-		if (maze[player.pacmanGridX][player.pacmanGridY + 1] != Tiles::wall && maze[player.pacmanGridX][player.pacmanGridY + 1] != Tiles::gate)
-		{
-			player.turnTo = { 1, 0 };
-			break;
-		}
-	case 'a'://left
-		if (maze[player.pacmanGridX][player.pacmanGridY - 1] != Tiles::wall && maze[player.pacmanGridX][player.pacmanGridY - 1] != Tiles::gate)
-		{
-			player.turnTo = { -1, 0 };
-			break;
-		}
-	case 'w'://up
-		if (maze[player.pacmanGridX - 1][player.pacmanGridY] != Tiles::wall && maze[player.pacmanGridX - 1][player.pacmanGridY] != Tiles::gate)
-		{
-			player.turnTo = { 0, 1 };
-			break;
-		}
-	case 's'://down
-		if (maze[player.pacmanGridX + 1][player.pacmanGridY] != Tiles::wall && maze[player.pacmanGridX + 1][player.pacmanGridY] != Tiles::gate)
-		{
-			player.turnTo = { 0, -1 };
-			break;
-		}
-	}
-	glutPostRedisplay();
+	gc.movePacMan(key, x, y);
 }
 
-void drawTiles(void)
+void handleKeyMenu(unsigned char key, int x, int y)
 {
-	glPushMatrix();
-	glTranslatef(player.pacmanXStart, -player.pacmanYStart, 0);
-	player.drawMouth();
-	player.drawPacMan();
-	glPopMatrix();
+	gc.keyboardMenu(key, x, y);
+}
 
-	glPushMatrix();
-	glTranslatef(r.blinkyXStart, -r.blinkyYStart, 0);
-	r.drawBlinky();
-	glPopMatrix();
+void handleKeyGameOver(unsigned char key, int x, int y)
+{
+	gc.keyboardGameOver(key, x, y);
+}
 
-	glPushMatrix();
-	glTranslatef(p.pinkyXStart, -p.pinkyYStart, 0);
-	p.drawPinky();
-	glPopMatrix();
+void drawGameBoard(void)
+{
+	gc.drawPacman();
 
-	//inky here
+	gc.drawBlinky();
 
-	glPushMatrix();
-	glTranslatef(c.clydeXStart, -c.clydeYStart, 0);
-	c.drawClyde();
-	glPopMatrix();
+	gc.drawPinky();
+
+	gc.drawInky();
+
+	gc.drawClyde();
 
     for (int i = 0; i < mapHeight; i++)
     {
@@ -85,83 +49,27 @@ void drawTiles(void)
 			{
 				glPushMatrix();
 				glTranslatef(j, -i, 0);
-
-				glColor3f(0, 0, 1);
-				glBegin(GL_POLYGON);
-				glVertex3f(-0.500000, -0.500000, 0.500000);
-				glVertex3f(0.500000, -0.500000, 0.500000);
-				glVertex3f(0.500000, 0.500000, 0.500000);
-				glVertex3f(-0.500000, 0.500000, 0.500000);
-				glEnd();
-
-				glColor3f(0, 128, 128);
-				glBegin(GL_POLYGON);
-				glVertex3f(-0.500000, 0.500000, 0.500000);
-				glVertex3f(0.500000, 0.500000, 0.500000);
-				glVertex3f(0.500000, 0.500000, -0.500000);
-				glVertex3f(-0.500000, -0.500000, -0.500000);
-				glEnd();
-
-				glColor3f(0, 128, 128);
-				glBegin(GL_POLYGON);
-				glVertex3f(-0.500000, 0.500000, -0.500000);
-				glVertex3f(0.500000, 0.500000, -0.500000);
-				glVertex3f(0.500000, -0.500000, -0.500000);
-				glVertex3f(-0.500000, -0.500000, -0.500000);
-				glEnd();
-
-				glColor3f(0, 128, 128);
-				glBegin(GL_POLYGON);
-				glVertex3f(-0.500000, -0.500000, -0.500000);
-				glVertex3f(0.500000, -0.500000, -0.500000);
-				glVertex3f(0.500000, -0.500000, 0.500000);
-				glVertex3f(-0.500000, -0.500000, 0.500000);
-				glEnd();
-
-				glColor3f(0, 128, 128);
-				glBegin(GL_POLYGON);
-				glVertex3f(0.500000, -0.500000, 0.500000);
-				glVertex3f(0.500000, -0.500000, -0.500000);
-				glVertex3f(0.500000, 0.500000, -0.500000);
-				glVertex3f(0.500000, 0.500000, 0.500000);
-				glEnd();
-				
-				glColor3f(0, 128, 128);
-				glBegin(GL_POLYGON);
-				glVertex3f(-0.500000, -0.500000, -0.500000);
-				glVertex3f(-0.500000, -0.500000, 0.500000);
-				glVertex3f(-0.500000, 0.500000, 0.500000);
-				glVertex3f(-0.500000, 0.500000, -0.500000);
-				glEnd();
+				gc.drawCube();
 			}
 			if (maze[i][j] == 1) 
 			{
 				glPushMatrix();
 				glTranslatef(j, -i, 0); 
-
-				glColor3f(255,255,255);
-				glutSolidSphere(0.13f, 10, 10);
+				gc.drawSmallPellet();
 			}
 			
 			if (maze[i][j] == 2) 
 			{
 				glPushMatrix();
 				glTranslatef(j, -i, 0);
-
-				glColor3f(1, 0, 0);
-				glutSolidSphere(0.3f, 10, 10);
+				gc.drawBigPellet();
 			}
 			
 			if (maze[i][j] == 3) 
 			{
 				glPushMatrix();
 				glTranslatef(j, -i, 0);
-
-				glBegin(GL_LINES);
-				glColor3f(255, 255, 255);
-				glVertex2f(0.5f, 0.5f);
-				glVertex2f(-0.5f, 0.5f);
-				glEnd();
+				gc.drawGate();
 			}
             glPopMatrix();
         }
@@ -188,8 +96,9 @@ void startScatter()
 	}
 }
 
-void resetFrighten(int value) {
-	player.ateBigPellet = false;
+void playIntroMusic(int value) {
+	m.playIntro();
+	isIntroDone = true;
 }
 
 void display(void) 
@@ -197,6 +106,7 @@ void display(void)
 	int currentTime = glutGet(GLUT_ELAPSED_TIME);
 	float deltaTime = (currentTime - previousTime) / 1000.0f;
 	previousTime = currentTime;
+
     glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
@@ -204,31 +114,50 @@ void display(void)
 	glEnable(GL_DEPTH_TEST);
     glTranslatef(-13.5, 15, -30);
 
-    drawTiles(); 
 
-	//startScatter();
+	switch (currentState) {
+	case START_MENU:
+		
+		glutKeyboardFunc(handleKeyMenu);
+		menu.displayStartText();
+		break;
+	
+	case GAME:
+		glutKeyboardFunc(handleKeyPacman);
 
-	player.updatePacman(deltaTime);
-	if (player.ateBigPellet)
-		glutTimerFunc(5000, resetFrighten, 0);
+		updateHighScore();
+		menu.displayScore();
 
-	r.checkCollision(player.pacmanGridX, player.pacmanGridY);
-	r.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet);
-	r.setBlinkySpeed();
-	r.updateBlinky(deltaTime);
+		drawGameBoard();
+		
+		if(!isIntroDone)
+			glutTimerFunc(0, playIntroMusic, 0);
+		
+		//startScatter();
 
-	//p.checkCollision(player.pacmanGridX, player.pacmanGridY);
-	//p.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet, player.turnTo.x, player.turnTo.y);
-	//p.setPinkySpeed();
-	//p.updatePinky(deltaTime);
+		if(isIntroDone)
+		{
+			m.playMovementSound();
+			
+			gc.pacmanController(deltaTime);
 
-	//inky here
+			gc.blinkyController(deltaTime);
 
-	c.checkCollision(player.pacmanGridX, player.pacmanGridY);
-	c.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet);
-	c.setClydeSpeed();
-	c.updateClyde(deltaTime);
+			gc.pinkyController(deltaTime);
 
+			gc.inkyController(deltaTime);
+
+			gc.clydeController(deltaTime);
+		}
+		break;
+
+	case GAME_OVER_MENU:
+		
+		glutKeyboardFunc(handleKeyGameOver);
+		menu.displayOverText();
+		break;
+
+	}
 	glutSwapBuffers();
 }
 
@@ -284,7 +213,7 @@ int main(int argc, char** argv)
     glutInitWindowPosition(600, 200);
     glutCreateWindow("A basic OpenGL Window");
     glutDisplayFunc(display);
-	glutKeyboardFunc(movePacMan);
+	glutKeyboardFunc(handleKeyMenu);
     glutIdleFunc(display);
     glutReshapeFunc(reshape);
 

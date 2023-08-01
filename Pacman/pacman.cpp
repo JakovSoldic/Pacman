@@ -83,12 +83,14 @@ void Pacman::updatePacman(float deltaTime)
 	if (maze[pacmanGridX][pacmanGridY] == Tiles::small_pellet)
 	{
 		maze[pacmanGridX][pacmanGridY] = Tiles::empty_space;
+		score += 20;
 	}
 
 	if (maze[pacmanGridX][pacmanGridY] == Tiles::big_pellet)
 	{
 		maze[pacmanGridX][pacmanGridY] = Tiles::empty_space;
 		ateBigPellet = true;
+		score += 40;
 	}
 
 	if (maze[pacmanGridX][pacmanGridY] == Tiles::teleport_tile)

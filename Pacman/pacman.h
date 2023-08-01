@@ -24,7 +24,6 @@ public:
     float playerSpeed = 4.0f;
 
     float timer = 0;
-
     bool ateBigPellet = false;
 
     void drawMouth();

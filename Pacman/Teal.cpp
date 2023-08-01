@@ -7,15 +7,13 @@ using namespace std;
 #include <GL/GL.h>
 #include <GL/freeglut.h>
 
-#include "Pink.h"
+#include "Teal.h"
 #include "globalVariables.h"
 #include "BFS.cpp"
-#include "Music.h"
 
-BFS bfs2;
-Music m2;
+BFS bfs3;
 
-void Pinky::drawEllipse(float centerX, float centerY, float radiusX, float radiusY)
+void Inky::drawEllipse(float centerX, float centerY, float radiusX, float radiusY)
 {
 	const int SEGMENTS = 64;
 
@@ -30,14 +28,14 @@ void Pinky::drawEllipse(float centerX, float centerY, float radiusX, float radiu
 	glEnd();
 }
 
-void Pinky::drawPinky()
+void Inky::drawInky()
 {
 
 	const int SEGMENTS = 32;
 	const float PI = 3.14159265359;
 
 	glPushMatrix();
-	glTranslatef(pinkyX, pinkyY, 0);
+	glTranslatef(inkyX, inkyY, 0);
 	glPointSize(4);
 	glBegin(GL_POINTS);
 	glColor3f(0.0, 0.0, 1.0);
@@ -56,7 +54,7 @@ void Pinky::drawPinky()
 	else if (isDead)
 		glColor3f(0.5, 0.5, 0.5);
 	else
-		glColor3f(1.0f, 0.713f, 0.756f);
+		glColor3f(0.0f, 0.5f, 0.5f);
 	glVertex3f(0.0, 0.0, 0.0);
 	for (int i = 0; i <= SEGMENTS; i++)
 	{
@@ -71,7 +69,7 @@ void Pinky::drawPinky()
 	else if (isDead)
 		glColor3f(0.5, 0.5, 0.5);
 	else
-		glColor3f(1.0f, 0.713f, 0.756f);
+		glColor3f(0.0f, 0.5f, 0.5f);
 	glBegin(GL_POLYGON); // start drawing a polygon
 	glVertex2f(-0.4f, -0.30f); // lower left vertex
 	glVertex2f(0.4f, -0.30f); // lower right vertex
@@ -85,12 +83,12 @@ void Pinky::drawPinky()
 	glPopMatrix();
 }
 
-void Pinky::getPathFrightened(int targetX, int targetY)
+void Inky::getPathFrightened(int targetX, int targetY)
 {
 	pathCoordinates.clear();
 	counter = 0;
 
-	vector<BFS::Node*> path = bfs2.bfs(pinkyGridX, pinkyGridY, targetX, targetY, 0, 0);
+	vector<BFS::Node*> path = bfs3.bfs(inkyGridX, inkyGridY, targetX, targetY, 0, 0);
 	reverse(path.begin(), path.end());
 
 	for (BFS::Node* node : path) {
@@ -98,12 +96,12 @@ void Pinky::getPathFrightened(int targetX, int targetY)
 	}
 }
 
-void Pinky::getPathDead(int targetX, int targetY)
+void Inky::getPathDead(int targetX, int targetY)
 {
 	pathCoordinates.clear();
 	counter = 0;
 
-	vector<BFS::Node*> path = bfs2.bfs(pinkyGridX, pinkyGridY, targetX, targetY, 0, 0);
+	vector<BFS::Node*> path = bfs3.bfs(inkyGridX, inkyGridY, targetX, targetY, 0, 0);
 	reverse(path.begin(), path.end());
 
 	for (BFS::Node* node : path) {
@@ -111,13 +109,13 @@ void Pinky::getPathDead(int targetX, int targetY)
 	}
 }
 
-void Pinky::getPathChase(int targetX, int targetY)
+void Inky::getPathChase(int targetX, int targetY)
 {
 	if (targetX != previousTargetX || targetY != previousTargetY) {
 		pathCoordinates.clear();
 		counter = 0;
 
-		vector<BFS::Node*> path = bfs2.bfs(pinkyGridX, pinkyGridY, targetX, targetY, prevGridX, prevGridY);
+		vector<BFS::Node*> path = bfs3.bfs(inkyGridX, inkyGridY, targetX, targetY, prevGridX, prevGridY);
 		reverse(path.begin(), path.end());
 
 		for (BFS::Node* node : path) {
@@ -129,7 +127,7 @@ void Pinky::getPathChase(int targetX, int targetY)
 	}
 }
 
-void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacmanDirectionX, int pacmanDirectionY)
+void Inky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacmanDirectionX, int pacmanDirectionY, int blinkyGridX, int blinkyGridY)
 {
 	if (!isDead)
 		isFrightened = status;
@@ -142,7 +140,7 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 			hasReachedHome = false;
 		}
 
-		if (pinkyGridX == ghostHomeX && pinkyGridY == ghostHomeY)
+		if (inkyGridX == ghostHomeX && inkyGridY == ghostHomeY)
 		{
 			isDead = false;
 			hasReachedTarget = true;
@@ -167,7 +165,7 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 			hasReachedTarget = false;
 		}
 
-		if (pinkyGridX == randomGridX && pinkyGridY == randomGridY)
+		if (inkyGridX == randomGridX && inkyGridY == randomGridY)
 		{
 			hasReachedTarget = true;
 		}
@@ -177,86 +175,72 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 	{
 		if (hasReachedCorner)
 		{
-			getPathDead(pinkyCornerX, pinkyCornerY);
+			getPathDead(inkyCornerX, inkyCornerY);
 			hasReachedCorner = false;
 		}
 	}
 
 	if (!isDead && !isFrightened && !isScatter)
 	{
-		//if (bfs2.countValidDirections(pinkyGridX, pinkyGridY) >= 3 || bfs2.isCorner(pinkyGridX, pinkyGridY, prevGridX, prevGridY))
-		if (animationComplete)
+		//if (bfs3.countValidDirections(inkyGridX, inkyGridY) >= 3 || bfs3.isCorner(inkyGridX, inkyGridY, prevGridX, prevGridY))
+		if(animationComplete)
 		{
-			int targetX = pacmanTargetX;
-			int targetY = pacmanTargetY;
+			int dx = 0;
+			int dy = 0;
+			int targetX = blinkyGridX;
+			int targetY = blinkyGridY;
 
 			if (pacmanDirectionX == 1)
 			{
-				targetX = pacmanTargetX;
-				targetY = pacmanTargetY + 4;
-
-				while (targetY < mapWidth && maze[targetX][targetY] == Tiles::wall)
-				{
-					targetY--;
-				}
-
-				if (targetY < 0 || targetY >= mapWidth)
-				{
-					targetY = pacmanTargetY;
-				}
+				targetY = blinkyGridY + 2;
+				dx = pacmanTargetX - blinkyGridX;
+				dy = pacmanTargetY - blinkyGridY;
 			}
 			else if (pacmanDirectionX == -1)
 			{
-				targetX = pacmanTargetX;
-				targetY = pacmanTargetY - 4;
-
-				while (targetY >= 0 && maze[targetX][targetY] == Tiles::wall)
-				{
-					targetY++;
-				}
-
-				if (targetY < 0 || targetY >= mapWidth)
-				{
-					targetY = pacmanTargetY;
-				}
+				targetY = blinkyGridY - 2;
+				dx = pacmanTargetX - blinkyGridX;
+				dy = pacmanTargetY - blinkyGridY;
 			}
 			else if (pacmanDirectionY == 1)
 			{
-				targetX = pacmanTargetX - 4;
-				targetY = pacmanTargetY;
-
-				while (targetX >= 0 && maze[targetX][targetY] == Tiles::wall)
-				{
-					targetX--;
-				}
-
-				if (targetX < 0 || targetX >= mapHeight)
-				{
-					targetX = pacmanTargetX;
-				}
+				targetX = blinkyGridX - 2;
+				dx = pacmanTargetY - blinkyGridY;
+				dy = pacmanTargetX - blinkyGridX;
 			}
 			else if (pacmanDirectionY == -1)
 			{
-				targetX = pacmanTargetX + 4;
-				targetY = pacmanTargetY;
+				targetX = blinkyGridX + 2;
+				dx = pacmanTargetY - blinkyGridY;
+				dy = pacmanTargetX - blinkyGridX;
+			}
 
-				while (targetX < mapHeight && maze[targetX][targetY] == Tiles::wall)
-				{
+			dx *= 2;
+			dy *= 2;
+
+			while (bfs3.isValidPosition(targetX, targetY) && maze[targetX][targetY] == Tiles::wall)
+			{
+				//if (targetX < 0 || targetX >= mapHeight || targetY < 0 || targetY >= mapWidth)
+				//	break;
+
+				if (dx > 0) 
 					targetX++;
-				}
+				else if (dx < 0) 
+					targetX--;
 
-				if (targetX < 0 || targetX >= mapHeight)
-				{
-					targetX = pacmanTargetX;
-				}
+				if (dy > 0) 
+					targetY++;
+				else if (dy < 0) 
+					targetY--;
 			}
 
 			getPathChase(targetX, targetY);
+
 		}
 	}
 }
 
-void Pinky::updatePinky(float deltaTime)
+void Inky::updateInky(float deltaTime)
 {
 	if (counter < pathCoordinates.size())
 	{
@@ -265,24 +249,24 @@ void Pinky::updatePinky(float deltaTime)
 			x = pathCoordinates[counter].first;
 			y = pathCoordinates[counter].second;
 
-			targetGridX = x - pinkyGridX;
-			targetGridY = y - pinkyGridY;
+			targetGridX = x - inkyGridX;
+			targetGridY = y - inkyGridY;
 
-			targetPosX = pinkyX + targetGridY;
-			targetPosY = pinkyY - targetGridX;
+			targetPosX = inkyX + targetGridY;
+			targetPosY = inkyY - targetGridX;
 			animationComplete = false;
 		}
 
-		pinkyX = constantInterpolation(pinkyX, targetPosX, pinkySpeed, deltaTime);
-		pinkyY = constantInterpolation(pinkyY, targetPosY, pinkySpeed, deltaTime);
+		inkyX = constantInterpolation(inkyX, targetPosX, blinkySpeed, deltaTime);
+		inkyY = constantInterpolation(inkyY, targetPosY, blinkySpeed, deltaTime);
 
-		if (pinkyX == targetPosX && pinkyY == targetPosY)
+		if (inkyX == targetPosX && inkyY == targetPosY)
 		{
-			prevGridX = pinkyGridX;
-			prevGridY = pinkyGridY;
+			prevGridX = inkyGridX;
+			prevGridY = inkyGridY;
 
-			pinkyGridX = x;
-			pinkyGridY = y;
+			inkyGridX = x;
+			inkyGridY = y;
 
 			counter++;
 			animationComplete = true;
@@ -291,31 +275,30 @@ void Pinky::updatePinky(float deltaTime)
 	}
 }
 
-void Pinky::setPinkySpeed()
+void Inky::setInkySpeed()
 {
 	if (isFrightened)
-		pinkySpeed = 2.0f;
+		blinkySpeed = 2.0f;
 	else if (isDead)
-		pinkySpeed = 6.0f;
+		blinkySpeed = 6.0f;
 	else
-		pinkySpeed = 4.0f;
+		blinkySpeed = 4.0f;
 }
 
-void Pinky::checkCollision(int targetX, int targetY)
+void Inky::checkCollision(int targetX, int targetY)
 {
 	if (isFrightened)
 	{
-		if (pinkyGridX == targetX && pinkyGridY == targetY)
+		if (inkyGridX == targetX && inkyGridY == targetY)
 		{
 			isDead = true;
 			isFrightened = false;
-			m2.playAteGhost();
 		}
 	}
 
 	if (!isFrightened && !isDead)
 	{
-		if (pinkyGridX == targetX && pinkyGridY == targetY)
+		if (inkyGridX == targetX && inkyGridY == targetY)
 		{
 			std::cout << "Collision detected! Exiting the program." << std::endl;
 			exit(0);

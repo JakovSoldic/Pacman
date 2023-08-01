@@ -1,17 +1,25 @@
 #include <cstdlib>
 #include <iostream>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <fstream>
 #include "globalVariables.h"
+using namespace std;
 const int mapWidth = 28;
 const int mapHeight = 31;
 
 int previousTime = 0;
+
+int score = 0;
+int highScore;
 
 bool isScatter = false;
 int scatterCounter = 0;
 
 int ghostHomeX = 13;
 int ghostHomeY = 13;
+
+bool isIntroDone = false;
 
 extern int maze[mapHeight][mapWidth] = {
 	{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
@@ -47,6 +55,8 @@ extern int maze[mapHeight][mapWidth] = {
 	{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
 };
 
+GameState currentState = START_MENU;
+
 float constantInterpolation(float startPoint, float endPoint, float speed, float time)
 {
 	float distance = endPoint - startPoint;
@@ -61,4 +71,30 @@ float constantInterpolation(float startPoint, float endPoint, float speed, float
 		float t = time / totalDuration;
 		return startPoint + (distance * t);
 	}
+}
+
+void updateHighScore()
+{
+	ifstream readFile("highScore.txt");
+	if (readFile.is_open())
+	{
+		while (!readFile.eof())
+		{
+			readFile >> highScore;
+		}
+	}
+
+	readFile.close();
+
+	ofstream writeFile("highScore.txt");
+	if (writeFile.is_open())
+	{
+		while (highScore < score)
+		{
+			highScore = score;
+		}
+		writeFile << highScore;
+	}
+
+	writeFile.close();
 }

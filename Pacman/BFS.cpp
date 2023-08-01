@@ -80,11 +80,11 @@ public:
             }
         }
 
-        cout << "Path: ";
-        for (int i = path.size() - 1; i >= 0; i--) {
-            cout << "(" << path[i]->x << ", " << path[i]->y << ") ";
-        }
-        cout << endl;
+        //cout << "Path: ";
+        //for (int i = path.size() - 1; i >= 0; i--) {
+        //    cout << "(" << path[i]->x << ", " << path[i]->y << ") ";
+        //}
+        //cout << endl;
 
         while (!queue.empty())
         {
