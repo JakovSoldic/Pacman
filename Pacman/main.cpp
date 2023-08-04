@@ -76,24 +76,15 @@ void drawGameBoard(void)
     }
 }
 
-void toggleScatter(int value)
-{
-	isScatter = !isScatter;
+void toggleScatter(int value) {
+	isScatter = true;
 
-	if (scatterCounter < 2)
+	glutTimerFunc(5000, [](int v)
 	{
-		scatterCounter++;
-		glutTimerFunc(5000, toggleScatter, 0);
-	}
-}
+		isScatter = false;
+	}, 0);
 
-void startScatter()
-{
-	if (scatterCounter == 0)
-	{
-		scatterCounter++;
-		glutTimerFunc(14000, toggleScatter, 0);
-	}
+	glutTimerFunc(7000, toggleScatter, 0);
 }
 
 void playIntroMusic(int value) {
@@ -123,6 +114,7 @@ void display(void)
 		break;
 	
 	case GAME:
+
 		glutKeyboardFunc(handleKeyPacman);
 
 		updateHighScore();
@@ -133,22 +125,23 @@ void display(void)
 		if(!isIntroDone)
 			glutTimerFunc(0, playIntroMusic, 0);
 		
-		//startScatter();
-
 		if(isIntroDone)
 		{
-			m.playMovementSound();
-			
+			//m.playMovementSound();
+
+			glutTimerFunc(7000, toggleScatter, 0);
+
 			gc.pacmanController(deltaTime);
 
 			gc.blinkyController(deltaTime);
 
-			gc.pinkyController(deltaTime);
+			//gc.pinkyController(deltaTime);
 
-			gc.inkyController(deltaTime);
+			//gc.inkyController(deltaTime);
 
-			gc.clydeController(deltaTime);
+			//gc.clydeController(deltaTime);
 		}
+
 		break;
 
 	case GAME_OVER_MENU:

@@ -10,8 +10,10 @@ using namespace std;
 #include "Orange.h"
 #include "globalVariables.h"
 #include "BFS.cpp"
+#include "Music.h"
 
 BFS bfs4;
+Music m4;
 
 void Clyde::drawEllipse(float centerX, float centerY, float radiusX, float radiusY)
 {
@@ -159,16 +161,36 @@ void Clyde::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 
 	}
 
+	if ((leftTeleporter || rightTeleporter) && !isDead)
+	{
+		if (hasReachedTeleport)
+		{
+			if (leftTeleporter)
+				getPathDead(14, 0);
+			else if (rightTeleporter)
+				getPathDead(14, 27);
+			hasReachedTeleport = false;
+		}
+
+		if ((leftTeleporter && clydeGridX == 14 && clydeGridY == 26) || (rightTeleporter && clydeGridX == 14 && clydeGridY == 1)) {
+			hasReachedTeleport = true;
+			leftTeleporter = false;
+			rightTeleporter = false;
+		}
+	}
+
 	if (isFrightened && !isDead)
 	{
 		if (hasReachedTarget)
 		{
 			srand(static_cast<unsigned>(time(0)));
+			vector<BFS::Node*> path;
 			do
 			{
 				randomGridX = rand() % (mapHeight - 2) + 1;
 				randomGridY = rand() % (mapWidth - 2) + 1;
-			} while (maze[randomGridX][randomGridY] == Tiles::wall);
+				path = bfs4.bfs(clydeGridX, clydeGridY, randomGridX, randomGridY, prevGridX, prevGridY);
+			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
 			getPathFrightened(randomGridX, randomGridY);
 			hasReachedTarget = false;
@@ -189,9 +211,9 @@ void Clyde::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 		}
 	}
 
-	if (!isDead && !isFrightened && !isScatter)
+	if (!isDead && !isFrightened && !isScatter && !leftTeleporter && !rightTeleporter)
 	{
-		if (bfs4.countValidDirections(clydeGridX, clydeGridY) >= 3 || bfs4.isCorner(clydeGridX, clydeGridY, prevGridX, prevGridY))
+		if (animationComplete)
 		{
 			if (isWithinRadius(pacmanTargetX, pacmanTargetY, clydeGridX, clydeGridY, radius))
 			{
@@ -238,6 +260,32 @@ void Clyde::updateClyde(float deltaTime)
 		}
 
 	}
+
+	if (clydeGridX == 14 && clydeGridY == 22 && prevGridY == 21)
+	{
+		rightTeleporter = true;
+	}
+
+	if (clydeGridX == 14 && clydeGridY == 5 && prevGridY == 6)
+	{
+		leftTeleporter = true;
+	}
+
+	if (maze[clydeGridX][clydeGridY] == Tiles::teleport_tile)
+	{
+		if (clydeGridX == 14 && clydeGridY == 0)
+		{
+			clydeGridX = 14;
+			clydeGridY = 26;
+			clydeX = 13;
+		}
+		else if (clydeGridX == 14 && clydeGridY == 27)
+		{
+			clydeGridX = 14;
+			clydeGridY = 1;
+			clydeX = -12;
+		}
+	}
 }
 
 void Clyde::setClydeSpeed()
@@ -247,7 +295,7 @@ void Clyde::setClydeSpeed()
 	else if (isDead)
 		clydeSpeed = 6.0f;
 	else
-		clydeSpeed = 4.0f;
+		clydeSpeed = 3.1f;
 }
 
 void Clyde::checkCollision(int targetX, int targetY)
@@ -258,6 +306,8 @@ void Clyde::checkCollision(int targetX, int targetY)
 		{
 			isDead = true;
 			isFrightened = false;
+			score += 200;
+			m4.playAteGhost();
 		}
 	}
 
@@ -265,8 +315,9 @@ void Clyde::checkCollision(int targetX, int targetY)
 	{
 		if (clydeGridX == targetX && clydeGridY == targetY)
 		{
-			std::cout << "Collision detected! Exiting the program." << std::endl;
-			exit(0);
+			m4.stopMovementSound();
+			m4.playDeath();
+			currentState = GAME_OVER_MENU;
 		}
 	}
 }

@@ -10,8 +10,10 @@ using namespace std;
 #include "Teal.h"
 #include "globalVariables.h"
 #include "BFS.cpp"
+#include "Music.h"
 
 BFS bfs3;
+Music m3;
 
 void Inky::drawEllipse(float centerX, float centerY, float radiusX, float radiusY)
 {
@@ -150,16 +152,36 @@ void Inky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacman
 
 	}
 
+	if ((leftTeleporter || rightTeleporter) && !isDead)
+	{
+		if (hasReachedTeleport)
+		{
+			if (leftTeleporter)
+				getPathDead(14, 0);
+			else if (rightTeleporter)
+				getPathDead(14, 27);
+			hasReachedTeleport = false;
+		}
+
+		if ((leftTeleporter && inkyGridX == 14 && inkyGridY == 26) || (rightTeleporter && inkyGridX == 14 && inkyGridY == 1)) {
+			hasReachedTeleport = true;
+			leftTeleporter = false;
+			rightTeleporter = false;
+		}
+	}
+
 	if (isFrightened && !isDead)
 	{
 		if (hasReachedTarget)
 		{
 			srand(static_cast<unsigned>(time(0)));
+			vector<BFS::Node*> path;
 			do
 			{
 				randomGridX = rand() % (mapHeight - 2) + 1;
 				randomGridY = rand() % (mapWidth - 2) + 1;
-			} while (maze[randomGridX][randomGridY] == Tiles::wall);
+				path = bfs3.bfs(inkyGridX, inkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
+			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
 			getPathFrightened(randomGridX, randomGridY);
 			hasReachedTarget = false;
@@ -180,7 +202,7 @@ void Inky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacman
 		}
 	}
 
-	if (!isDead && !isFrightened && !isScatter)
+	if (!isDead && !isFrightened && !isScatter && !leftTeleporter && !rightTeleporter)
 	{
 		//if (bfs3.countValidDirections(inkyGridX, inkyGridY) >= 3 || bfs3.isCorner(inkyGridX, inkyGridY, prevGridX, prevGridY))
 		if(animationComplete)
@@ -193,48 +215,31 @@ void Inky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacman
 			if (pacmanDirectionX == 1)
 			{
 				targetY = blinkyGridY + 2;
-				dx = pacmanTargetX - blinkyGridX;
-				dy = pacmanTargetY - blinkyGridY;
+				dx = 2 * pacmanTargetX - blinkyGridX;
+				dy = 2 * targetY - blinkyGridY;
 			}
 			else if (pacmanDirectionX == -1)
 			{
 				targetY = blinkyGridY - 2;
-				dx = pacmanTargetX - blinkyGridX;
-				dy = pacmanTargetY - blinkyGridY;
+				dx = 2 * pacmanTargetX - blinkyGridX;
+				dy = 2 * targetY - blinkyGridY;
 			}
 			else if (pacmanDirectionY == 1)
 			{
 				targetX = blinkyGridX - 2;
-				dx = pacmanTargetY - blinkyGridY;
-				dy = pacmanTargetX - blinkyGridX;
+				dx = 2 * targetX - blinkyGridY;
+				dy = 2 * pacmanTargetX - blinkyGridX;
 			}
 			else if (pacmanDirectionY == -1)
 			{
 				targetX = blinkyGridX + 2;
-				dx = pacmanTargetY - blinkyGridY;
-				dy = pacmanTargetX - blinkyGridX;
+				dx = 2 * targetX - blinkyGridY;
+				dy = 2 * pacmanTargetX - blinkyGridX;
 			}
 
-			dx *= 2;
-			dy *= 2;
+			pair<int, int> checkDoubleVector = bfs3.findClosestValidCoordinates(dx, dy, blinkyGridX, blinkyGridY);
 
-			while (bfs3.isValidPosition(targetX, targetY) && maze[targetX][targetY] == Tiles::wall)
-			{
-				//if (targetX < 0 || targetX >= mapHeight || targetY < 0 || targetY >= mapWidth)
-				//	break;
-
-				if (dx > 0) 
-					targetX++;
-				else if (dx < 0) 
-					targetX--;
-
-				if (dy > 0) 
-					targetY++;
-				else if (dy < 0) 
-					targetY--;
-			}
-
-			getPathChase(targetX, targetY);
+			getPathChase(checkDoubleVector.first, checkDoubleVector.second);
 
 		}
 	}
@@ -257,8 +262,8 @@ void Inky::updateInky(float deltaTime)
 			animationComplete = false;
 		}
 
-		inkyX = constantInterpolation(inkyX, targetPosX, blinkySpeed, deltaTime);
-		inkyY = constantInterpolation(inkyY, targetPosY, blinkySpeed, deltaTime);
+		inkyX = constantInterpolation(inkyX, targetPosX, inkySpeed, deltaTime);
+		inkyY = constantInterpolation(inkyY, targetPosY, inkySpeed, deltaTime);
 
 		if (inkyX == targetPosX && inkyY == targetPosY)
 		{
@@ -273,16 +278,42 @@ void Inky::updateInky(float deltaTime)
 		}
 
 	}
+
+	if (inkyGridX == 14 && inkyGridY == 22 && prevGridY == 21)
+	{
+		rightTeleporter = true;
+	}
+
+	if (inkyGridX == 14 && inkyGridY == 5 && prevGridY == 6)
+	{
+		leftTeleporter = true;
+	}
+
+	if (maze[inkyGridX][inkyGridY] == Tiles::teleport_tile)
+	{
+		if (inkyGridX == 14 && inkyGridY == 0)
+		{
+			inkyGridX = 14;
+			inkyGridY = 26;
+			inkyX = 13;
+		}
+		else if (inkyGridX == 14 && inkyGridY == 27)
+		{
+			inkyGridX = 14;
+			inkyGridY = 1;
+			inkyX = -12;
+		}
+	}
 }
 
 void Inky::setInkySpeed()
 {
 	if (isFrightened)
-		blinkySpeed = 2.0f;
+		inkySpeed = 2.0f;
 	else if (isDead)
-		blinkySpeed = 6.0f;
+		inkySpeed = 6.0f;
 	else
-		blinkySpeed = 4.0f;
+		inkySpeed = 3.4f;
 }
 
 void Inky::checkCollision(int targetX, int targetY)
@@ -293,6 +324,8 @@ void Inky::checkCollision(int targetX, int targetY)
 		{
 			isDead = true;
 			isFrightened = false;
+			score += 200;
+			m3.playAteGhost();
 		}
 	}
 
@@ -300,8 +333,9 @@ void Inky::checkCollision(int targetX, int targetY)
 	{
 		if (inkyGridX == targetX && inkyGridY == targetY)
 		{
-			std::cout << "Collision detected! Exiting the program." << std::endl;
-			exit(0);
+			m3.stopMovementSound();
+			m3.playDeath();
+			currentState = GAME_OVER_MENU;
 		}
 	}
 }

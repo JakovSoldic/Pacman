@@ -20,6 +20,11 @@ Pinky p;
 Inky t;
 Clyde o;
 
+#include <chrono>
+
+std::chrono::steady_clock::time_point bigPelletTime;
+
+//stuff for drawing on the screen___________________________________________________________
 void GameController::drawPacman()
 {
 	glPushMatrix();
@@ -133,10 +138,7 @@ void GameController::drawGate()
 	glEnd();
 }
 
-void resetFrighten(int value) {
-	player.ateBigPellet = false;
-}
-
+//keyboard control for game screens___________________________________________________________
 void GameController::movePacMan(unsigned char key, int x, int y)
 {
 	switch (key) {
@@ -200,11 +202,32 @@ void GameController::keyboardGameOver(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
+//controllers for each character___________________________________________________________
+void frightenedDuration()
+{
+	if (!bigPelletTime.time_since_epoch().count())
+	{
+		bigPelletTime = chrono::steady_clock::now();
+	}
+
+	chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
+	chrono::duration<float> elapsedDuration = currentTime - bigPelletTime;
+
+	if (elapsedDuration.count() >= 5.0f)
+	{
+		player.ateBigPellet = false;
+		bigPelletTime = std::chrono::steady_clock::time_point();
+	}
+}
+
 void GameController::pacmanController(float deltaTime)
 {
 	player.updatePacman(deltaTime);
+
 	if (player.ateBigPellet)
-		glutTimerFunc(5000, resetFrighten, 0);
+	{
+		frightenedDuration();
+	}
 }
 
 void GameController::blinkyController(float deltaTime)

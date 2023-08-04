@@ -152,6 +152,24 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 
 	}
 	
+	if ((leftTeleporter || rightTeleporter) && !isDead) 
+	{
+		if (hasReachedTeleport)
+		{
+			if (leftTeleporter) 
+				getPathDead(14, 0);
+			else if (rightTeleporter)
+				getPathDead(14, 27);
+			hasReachedTeleport = false;
+		}
+
+		if ((leftTeleporter && blinkyGridX == 14 && blinkyGridY == 26) || (rightTeleporter && blinkyGridX == 14 && blinkyGridY == 1)) {
+			hasReachedTeleport = true;
+			leftTeleporter = false;
+			rightTeleporter = false;
+		}
+	}
+
 	if (isFrightened && !isDead)
 	{
 		if (hasReachedTarget)
@@ -184,7 +202,7 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 		}
 	}
 
-	if (!isDead && !isFrightened && !isScatter)
+	if (!isDead && !isFrightened && !isScatter && !leftTeleporter && !rightTeleporter)
 	{
 		//if (bfs1.countValidDirections(blinkyGridX, blinkyGridY) >= 3 || bfs1.isCorner(blinkyGridX, blinkyGridY, prevGridX, prevGridY))
 		if (animationComplete)
@@ -227,6 +245,32 @@ void Blinky::updateBlinky(float deltaTime)
 		}
 
 	}
+
+	if (blinkyGridX == 14 && blinkyGridY == 22 && prevGridY == 21)
+	{
+		rightTeleporter = true;
+	}
+
+	if (blinkyGridX == 14 && blinkyGridY == 5 && prevGridY == 6)
+	{
+		leftTeleporter = true;
+	}
+
+	if (maze[blinkyGridX][blinkyGridY] == Tiles::teleport_tile)
+	{
+		if (blinkyGridX == 14 && blinkyGridY == 0)
+		{
+			blinkyGridX = 14;
+			blinkyGridY = 26;
+			blinkyX = 13;
+		}
+		else if (blinkyGridX == 14 && blinkyGridY == 27)
+		{
+			blinkyGridX = 14;
+			blinkyGridY = 1;
+			blinkyX = -12;
+		}
+	}
 }
 
 void Blinky::setBlinkySpeed()
@@ -259,8 +303,6 @@ void Blinky::checkCollision(int targetX, int targetY)
 			m1.stopMovementSound();
 			m1.playDeath();
 			currentState = GAME_OVER_MENU;
-			//std::cout << "Collision detected! Exiting the program." << std::endl;
-			//exit(0);
 		}
 	}
 }

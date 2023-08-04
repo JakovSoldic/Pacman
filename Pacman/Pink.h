@@ -11,7 +11,7 @@ public:
 
     float pinkyX = 0, pinkyY = 0;
     int pinkyGridX = pinkyYStart, pinkyGridY = pinkyXStart;
-    float pinkySpeed = 4.0f;
+    float pinkySpeed = 3.7f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -43,6 +43,10 @@ public:
     bool hasReachedTarget = true;
     bool hasReachedHome = true;
     bool hasReachedCorner = true;
+    bool hasReachedTeleport = true;
+
+    bool leftTeleporter = false;
+    bool rightTeleporter = false;
 
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
     void drawPinky();

@@ -11,7 +11,7 @@ public:
 
     float inkyX = 0, inkyY = 0;
     int inkyGridX = inkyYStart, inkyGridY = inkyXStart;
-    float blinkySpeed = 4.0f;
+    float inkySpeed = 3.4f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -43,6 +43,10 @@ public:
     bool hasReachedTarget = true;
     bool hasReachedHome = true;
     bool hasReachedCorner = true;
+    bool hasReachedTeleport = true;
+
+    bool leftTeleporter = false;
+    bool rightTeleporter = false;
 
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
     void drawInky();

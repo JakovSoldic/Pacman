@@ -16,6 +16,11 @@ public:
         Node(int x, int y, int distance, Node* parent = nullptr) : x(x), y(y), distance(distance), parent(parent) {}
     };
 
+    int manhattanDistance(int x1, int y1, int x2, int y2)
+    {
+        return abs(x1 - x2) + abs(y1 - y2);
+    }
+
     bool isValidPosition(int x, int y)
     {
         return x >= 0 && x < mapHeight && y >= 0 && y < mapWidth;
@@ -95,59 +100,45 @@ public:
         return path;
     }
 
-    int countValidDirections(int x, int y)
+    pair<int, int> findClosestValidCoordinates(int targetX, int targetY, int startX, int startY)
     {
-        int validDirections = 0;
+        queue<pair<int, int>> q;
+        vector<vector<bool>> visited(mapHeight, vector<bool>(mapWidth, false));
 
-        int dir[4][2] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };
-        for (int i = 0; i < 4; i++) {
-            int newX = x + dir[i][0];
-            int newY = y + dir[i][1];
+        q.push(make_pair(startX, startY));
+        visited[startX][startY] = true;
 
-            if (isValidPosition(newX, newY) && maze[newX][newY] != Tiles::wall) 
-                validDirections++;
-        }
+        pair<int, int> closestValidTile = make_pair(startX, startY);
 
-        return validDirections;
-    }
-
-    bool isCorner(int x, int y, int prevX, int prevY)
-    {
-        int validDirections = 0;
-        int dx = x - prevX;
-        int dy = y - prevY;
-        int newX = 0;
-        int newY = 0;
-
-        if (dx != 0 && dy == 0)
+        while (!q.empty())
         {
-            int dir[2][2] = { {0, 1}, {0, -1} };
-            for (int i = 0; i < 2; i++)
-            {
-                newX = x + dir[i][0];
-                newY = y + dir[i][1];
+            pair<int, int> currentTile = q.front();
+            q.pop();
 
-                if (isValidPosition(newX, newY) && maze[newX][newY] != Tiles::wall)
+            if (isValidPosition(currentTile.first, currentTile.second))
+            {
+                if (manhattanDistance(currentTile.first, currentTile.second, targetX, targetY) < manhattanDistance(closestValidTile.first, closestValidTile.second, targetX, targetY))
+                    closestValidTile = currentTile;
+
+                if (currentTile.first == targetX && currentTile.second == targetY)
+                    return currentTile;
+
+                BFS::Node currentNode(currentTile.first, currentTile.second, 0, nullptr);
+                vector<BFS::Node*> neighbors = getNeighbors(&currentNode, startX, startY);
+                for (BFS::Node* neighbor : neighbors)
                 {
-                    validDirections++;
+                    int newX = neighbor->x;
+                    int newY = neighbor->y;
+
+                    if (!visited[newX][newY])
+                    {
+                        visited[newX][newY] = true;
+                        q.push(make_pair(newX, newY));
+                    }
                 }
             }
         }
 
-        if (dy != 0 && dx == 0)
-        {
-            int dir[2][2] = { {1, 0}, {-1, 0} };
-            for (int i = 0; i < 2; i++)
-            {
-                newX = x + dir[i][0];
-                newY = y + dir[i][1];
-
-                if (isValidPosition(newX, newY) && maze[newX][newY] != Tiles::wall)
-                {
-                    validDirections++;
-                }
-            }
-        }
-        return validDirections == 1;
+        return closestValidTile;
     }
 };

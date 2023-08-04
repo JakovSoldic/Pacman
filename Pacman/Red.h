@@ -43,6 +43,10 @@ public:
     bool hasReachedTarget = true;
     bool hasReachedHome = true;
     bool hasReachedCorner = true;
+    bool hasReachedTeleport = true;
+
+    bool leftTeleporter = false;
+    bool rightTeleporter = false;
 
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
     void drawBlinky();

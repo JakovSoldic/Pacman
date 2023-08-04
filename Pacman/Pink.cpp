@@ -152,16 +152,36 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 
 	}
 
+	if ((leftTeleporter || rightTeleporter) && !isDead)
+	{
+		if (hasReachedTeleport)
+		{
+			if (leftTeleporter)
+				getPathDead(14, 0);
+			else if (rightTeleporter)
+				getPathDead(14, 27);
+			hasReachedTeleport = false;
+		}
+
+		if ((leftTeleporter && pinkyGridX == 14 && pinkyGridY == 26) || (rightTeleporter && pinkyGridX == 14 && pinkyGridY == 1)) {
+			hasReachedTeleport = true;
+			leftTeleporter = false;
+			rightTeleporter = false;
+		}
+	}
+
 	if (isFrightened && !isDead)
 	{
 		if (hasReachedTarget)
 		{
 			srand(static_cast<unsigned>(time(0)));
+			vector<BFS::Node*> path;
 			do
 			{
 				randomGridX = rand() % (mapHeight - 2) + 1;
 				randomGridY = rand() % (mapWidth - 2) + 1;
-			} while (maze[randomGridX][randomGridY] == Tiles::wall);
+				path = bfs2.bfs(pinkyGridX, pinkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
+			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
 			getPathFrightened(randomGridX, randomGridY);
 			hasReachedTarget = false;
@@ -182,7 +202,7 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 		}
 	}
 
-	if (!isDead && !isFrightened && !isScatter)
+	if (!isDead && !isFrightened && !isScatter && !leftTeleporter && !rightTeleporter)
 	{
 		//if (bfs2.countValidDirections(pinkyGridX, pinkyGridY) >= 3 || bfs2.isCorner(pinkyGridX, pinkyGridY, prevGridX, prevGridY))
 		if (animationComplete)
@@ -194,64 +214,25 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 			{
 				targetX = pacmanTargetX;
 				targetY = pacmanTargetY + 4;
-
-				while (targetY < mapWidth && maze[targetX][targetY] == Tiles::wall)
-				{
-					targetY--;
-				}
-
-				if (targetY < 0 || targetY >= mapWidth)
-				{
-					targetY = pacmanTargetY;
-				}
 			}
 			else if (pacmanDirectionX == -1)
 			{
 				targetX = pacmanTargetX;
 				targetY = pacmanTargetY - 4;
-
-				while (targetY >= 0 && maze[targetX][targetY] == Tiles::wall)
-				{
-					targetY++;
-				}
-
-				if (targetY < 0 || targetY >= mapWidth)
-				{
-					targetY = pacmanTargetY;
-				}
 			}
 			else if (pacmanDirectionY == 1)
 			{
 				targetX = pacmanTargetX - 4;
 				targetY = pacmanTargetY;
-
-				while (targetX >= 0 && maze[targetX][targetY] == Tiles::wall)
-				{
-					targetX--;
-				}
-
-				if (targetX < 0 || targetX >= mapHeight)
-				{
-					targetX = pacmanTargetX;
-				}
 			}
 			else if (pacmanDirectionY == -1)
 			{
 				targetX = pacmanTargetX + 4;
 				targetY = pacmanTargetY;
-
-				while (targetX < mapHeight && maze[targetX][targetY] == Tiles::wall)
-				{
-					targetX++;
-				}
-
-				if (targetX < 0 || targetX >= mapHeight)
-				{
-					targetX = pacmanTargetX;
-				}
 			}
+			pair<int, int> checkFourInfront = bfs2.findClosestValidCoordinates(targetX, targetY, pinkyGridX, pinkyGridY);
 
-			getPathChase(targetX, targetY);
+			getPathChase(checkFourInfront.first, checkFourInfront.second);
 		}
 	}
 }
@@ -289,6 +270,32 @@ void Pinky::updatePinky(float deltaTime)
 		}
 
 	}
+
+	if (pinkyGridX == 14 && pinkyGridY == 22 && prevGridY == 21)
+	{
+		rightTeleporter = true;
+	}
+
+	if (pinkyGridX == 14 && pinkyGridY == 5 && prevGridY == 6)
+	{
+		leftTeleporter = true;
+	}
+
+	if (maze[pinkyGridX][pinkyGridY] == Tiles::teleport_tile)
+	{
+		if (pinkyGridX == 14 && pinkyGridY == 0)
+		{
+			pinkyGridX = 14;
+			pinkyGridY = 26;
+			pinkyX = 13;
+		}
+		else if (pinkyGridX == 14 && pinkyGridY == 27)
+		{
+			pinkyGridX = 14;
+			pinkyGridY = 1;
+			pinkyX = -12;
+		}
+	}
 }
 
 void Pinky::setPinkySpeed()
@@ -298,7 +305,7 @@ void Pinky::setPinkySpeed()
 	else if (isDead)
 		pinkySpeed = 6.0f;
 	else
-		pinkySpeed = 4.0f;
+		pinkySpeed = 3.7f;
 }
 
 void Pinky::checkCollision(int targetX, int targetY)
@@ -309,6 +316,7 @@ void Pinky::checkCollision(int targetX, int targetY)
 		{
 			isDead = true;
 			isFrightened = false;
+			score += 200;
 			m2.playAteGhost();
 		}
 	}
@@ -317,8 +325,9 @@ void Pinky::checkCollision(int targetX, int targetY)
 	{
 		if (pinkyGridX == targetX && pinkyGridY == targetY)
 		{
-			std::cout << "Collision detected! Exiting the program." << std::endl;
-			exit(0);
+			m2.stopMovementSound();
+			m2.playDeath();
+			currentState = GAME_OVER_MENU;
 		}
 	}
 }

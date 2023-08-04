@@ -12,7 +12,7 @@ public:
 
     float clydeX = 0, clydeY = 0;
     int clydeGridX = clydeYStart, clydeGridY = clydeXStart;
-    float clydeSpeed = 4.0f;
+    float clydeSpeed = 3.1f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -44,6 +44,10 @@ public:
     bool hasReachedTarget = true;
     bool hasReachedHome = true;
     bool hasReachedCorner = true;
+    bool hasReachedTeleport = true;
+
+    bool leftTeleporter = false;
+    bool rightTeleporter = false;
 
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
     void drawClyde();
