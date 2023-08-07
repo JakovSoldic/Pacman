@@ -11,7 +11,7 @@ public:
 
     float inkyX = 0, inkyY = 0;
     int inkyGridX = inkyYStart, inkyGridY = inkyXStart;
-    float inkySpeed = 3.4f;
+    float inkySpeed = 6.0f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -32,8 +32,8 @@ public:
     int randomGridX = 0;
     int randomGridY = 0;
 
-    int inkyCornerX = 1;
-    int inkyCornerY = 1;
+    int inkyCornerX = 29;
+    int inkyCornerY = 26;
 
     int x = 0;
     int y = 0;
@@ -42,7 +42,6 @@ public:
     bool isFrightened = false;
     bool hasReachedTarget = true;
     bool hasReachedHome = true;
-    bool hasReachedCorner = true;
     bool hasReachedTeleport = true;
 
     bool leftTeleporter = false;

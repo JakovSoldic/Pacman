@@ -12,6 +12,7 @@ int previousTime = 0;
 
 int score = 0;
 int highScore;
+int lives = 2;
 
 bool isScatter = false;
 int scatterCounter = 0;
@@ -20,6 +21,8 @@ int ghostHomeX = 13;
 int ghostHomeY = 13;
 
 bool isIntroDone = false;
+
+int numberOfPelletsEaten = 0;
 
 extern int maze[mapHeight][mapWidth] = {
 	{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},

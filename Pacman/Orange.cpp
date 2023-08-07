@@ -204,10 +204,9 @@ void Clyde::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 
 	if (isScatter && !isFrightened && !isDead)
 	{
-		if (hasReachedCorner)
+		if (animationComplete)
 		{
-			getPathDead(clydeCornerX, clydeCornerY);
-			hasReachedCorner = false;
+			getPathChase(clydeCornerX, clydeCornerY);
 		}
 	}
 
@@ -277,13 +276,13 @@ void Clyde::updateClyde(float deltaTime)
 		{
 			clydeGridX = 14;
 			clydeGridY = 26;
-			clydeX = 13;
+			clydeX = 11;
 		}
 		else if (clydeGridX == 14 && clydeGridY == 27)
 		{
 			clydeGridX = 14;
 			clydeGridY = 1;
-			clydeX = -12;
+			clydeX = -14;
 		}
 	}
 }
@@ -295,7 +294,7 @@ void Clyde::setClydeSpeed()
 	else if (isDead)
 		clydeSpeed = 6.0f;
 	else
-		clydeSpeed = 3.1f;
+		clydeSpeed = 6.0f;
 }
 
 void Clyde::checkCollision(int targetX, int targetY)
@@ -315,6 +314,7 @@ void Clyde::checkCollision(int targetX, int targetY)
 	{
 		if (clydeGridX == targetX && clydeGridY == targetY)
 		{
+			lives--;
 			m4.stopMovementSound();
 			m4.playDeath();
 			currentState = GAME_OVER_MENU;

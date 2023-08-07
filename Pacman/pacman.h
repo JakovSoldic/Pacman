@@ -21,9 +21,8 @@ public:
 
     float pacmanX = 0, pacmanY = 0;
     int pacmanGridX = pacmanYStart, pacmanGridY = pacmanXStart;
-    float playerSpeed = 4.0f;
+    float playerSpeed = 6.0f;
 
-    float timer = 0;
     bool ateBigPellet = false;
 
     void drawMouth();

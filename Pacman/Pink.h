@@ -11,7 +11,7 @@ public:
 
     float pinkyX = 0, pinkyY = 0;
     int pinkyGridX = pinkyYStart, pinkyGridY = pinkyXStart;
-    float pinkySpeed = 3.7f;
+    float pinkySpeed = 6.0f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -42,7 +42,6 @@ public:
     bool isFrightened = false;
     bool hasReachedTarget = true;
     bool hasReachedHome = true;
-    bool hasReachedCorner = true;
     bool hasReachedTeleport = true;
 
     bool leftTeleporter = false;

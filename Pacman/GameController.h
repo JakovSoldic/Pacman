@@ -1,9 +1,20 @@
 #pragma once
 #include <iostream>
+#include <chrono>
+using namespace std;
+using namespace chrono;
 
 class GameController
 {
 public:
+
+	steady_clock::time_point bigPelletTime;
+	steady_clock::time_point startScatterTime;
+	steady_clock::time_point endScatterTime;
+
+	bool startScatter = false;
+	bool endScatter = false;
+
 	//stuff for drawing on the screen
 	void drawPacman();
 	void drawBlinky();
@@ -20,10 +31,20 @@ public:
 	void keyboardMenu(unsigned char key, int x, int y);
 	void keyboardGameOver(unsigned char key, int x, int y);
 
+	//timers
+	void frightenedDuration();
+	void startScatterDuration();
+	void endScatterDuration();
+
 	//controllers for each character
 	void pacmanController(float deltaTime);
 	void blinkyController(float deltaTime);
 	void pinkyController(float deltaTime);
 	void inkyController(float deltaTime);
 	void clydeController(float deltaTime);
+
+	//game state controllers
+	bool checkGameState();
+	void resetGameState();
+
 };

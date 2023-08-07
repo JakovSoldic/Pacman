@@ -12,7 +12,7 @@ public:
 
     float clydeX = 0, clydeY = 0;
     int clydeGridX = clydeYStart, clydeGridY = clydeXStart;
-    float clydeSpeed = 3.1f;
+    float clydeSpeed = 6.0f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -43,7 +43,6 @@ public:
     bool isFrightened = false;
     bool hasReachedTarget = true;
     bool hasReachedHome = true;
-    bool hasReachedCorner = true;
     bool hasReachedTeleport = true;
 
     bool leftTeleporter = false;

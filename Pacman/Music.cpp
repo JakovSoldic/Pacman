@@ -30,7 +30,6 @@ void Music::playMovementSound()
 
 void Music::stopMovementSound()
 {
-
     mciSendString(L"stop chomp", NULL, 0, NULL);
     mciSendString(L"close chomp", NULL, 0, NULL);
 }

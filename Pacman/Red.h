@@ -11,7 +11,7 @@ public:
 
     float blinkyX = 0, blinkyY = 0;
     int blinkyGridX = blinkyYStart, blinkyGridY = blinkyXStart;
-    float blinkySpeed = 4.0f;
+    float blinkySpeed = 6.0f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -42,13 +42,13 @@ public:
     bool isFrightened = false;
     bool hasReachedTarget = true;
     bool hasReachedHome = true;
-    bool hasReachedCorner = true;
     bool hasReachedTeleport = true;
 
     bool leftTeleporter = false;
     bool rightTeleporter = false;
 
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
+    void drawEyes();
     void drawBlinky();
     void getPathFrightened(int targetX, int targetY);
     void getPathDead(int targetX, int targetY);

@@ -8,6 +8,7 @@ extern int previousTime;
 
 extern int score;
 extern int highScore;
+extern int lives;
 
 extern bool isScatter;
 extern int scatterCounter;
@@ -16,6 +17,8 @@ extern int ghostHomeX;
 extern int ghostHomeY;
 
 extern bool isIntroDone;
+
+extern int numberOfPelletsEaten;
 
 enum Tiles {
     empty_space,//number 0 in the maze
@@ -29,7 +32,8 @@ enum Tiles {
 enum GameState {
     START_MENU,
     GAME,
-    GAME_OVER_MENU
+    GAME_OVER_MENU,
+    GAME_WON_MENU
 };
 
 extern GameState currentState;

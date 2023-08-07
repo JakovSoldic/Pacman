@@ -195,16 +195,14 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 
 	if (isScatter && !isFrightened && !isDead)
 	{
-		if (hasReachedCorner)
+		if (animationComplete)
 		{
-			getPathDead(pinkyCornerX, pinkyCornerY);
-			hasReachedCorner = false;
+			getPathChase(pinkyCornerX, pinkyCornerY);
 		}
 	}
 
 	if (!isDead && !isFrightened && !isScatter && !leftTeleporter && !rightTeleporter)
 	{
-		//if (bfs2.countValidDirections(pinkyGridX, pinkyGridY) >= 3 || bfs2.isCorner(pinkyGridX, pinkyGridY, prevGridX, prevGridY))
 		if (animationComplete)
 		{
 			int targetX = pacmanTargetX;
@@ -305,7 +303,7 @@ void Pinky::setPinkySpeed()
 	else if (isDead)
 		pinkySpeed = 6.0f;
 	else
-		pinkySpeed = 3.7f;
+		pinkySpeed = 6.0f;
 }
 
 void Pinky::checkCollision(int targetX, int targetY)
@@ -325,6 +323,7 @@ void Pinky::checkCollision(int targetX, int targetY)
 	{
 		if (pinkyGridX == targetX && pinkyGridY == targetY)
 		{
+			lives--;
 			m2.stopMovementSound();
 			m2.playDeath();
 			currentState = GAME_OVER_MENU;

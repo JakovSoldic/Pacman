@@ -1,7 +1,9 @@
 #include <iostream>
 #include <windows.h>
 #include <stdio.h>
+#include <chrono>
 using namespace std;
+using namespace chrono;
 
 #include <GL/GL.h>
 #include <GL/freeglut.h>
@@ -19,10 +21,6 @@ Blinky r;
 Pinky p;
 Inky t;
 Clyde o;
-
-#include <chrono>
-
-std::chrono::steady_clock::time_point bigPelletTime;
 
 //stuff for drawing on the screen___________________________________________________________
 void GameController::drawPacman()
@@ -195,22 +193,33 @@ void GameController::keyboardGameOver(unsigned char key, int x, int y)
 	case 27:  // escape key
 		exit(0);
 		break;
+
 	case '1':
+		if (lives > 0 || !checkGameState())
+		{
+			resetGameState();
+			currentState = GAME;
+		}
+		break;
+
+	case '2':
 		exit(0);
 		break;
 	}
+
 	glutPostRedisplay();
 }
 
-//controllers for each character___________________________________________________________
-void frightenedDuration()
+
+//timers___________________________________________________________
+void GameController::frightenedDuration()
 {
 	if (!bigPelletTime.time_since_epoch().count())
 	{
 		bigPelletTime = chrono::steady_clock::now();
 	}
 
-	chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
+	chrono::steady_clock::time_point currentTime = chrono::steady_clock::now();
 	chrono::duration<float> elapsedDuration = currentTime - bigPelletTime;
 
 	if (elapsedDuration.count() >= 5.0f)
@@ -220,6 +229,38 @@ void frightenedDuration()
 	}
 }
 
+void GameController::startScatterDuration()
+{
+	if (!startScatter)
+	{
+		steady_clock::time_point currentTime = steady_clock::now();
+		duration<float> elapsedDuration = currentTime - startScatterTime;
+
+		if (elapsedDuration.count() >= 7.0f) {
+			startScatter = true;
+			endScatter = false;
+			isScatter = true;
+			startScatterTime = steady_clock::now();
+		}
+	}
+}
+
+void GameController::endScatterDuration()
+{
+	if (startScatter && !endScatter) {
+		steady_clock::time_point currentTime = steady_clock::now();
+		duration<float> elapsedDuration = currentTime - endScatterTime;
+
+		if (elapsedDuration.count() >= 5.0f) {
+			endScatter = true;
+			startScatter = false;
+			isScatter = false;
+			endScatterTime = steady_clock::now();
+		}
+	}
+}
+
+//controllers for each character___________________________________________________________
 void GameController::pacmanController(float deltaTime)
 {
 	player.updatePacman(deltaTime);
@@ -260,4 +301,128 @@ void GameController::clydeController(float deltaTime)
 	o.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet);
 	o.setClydeSpeed();
 	o.updateClyde(deltaTime);
+}
+
+//game state controllers___________________________________________________________
+bool GameController::checkGameState()
+{
+	int pelletCounter = 0;
+
+	for (int i = 0; i < mapHeight; i++)
+	{
+		for (int j = 0; j < mapWidth; j++)
+		{
+			if (maze[i][j] == Tiles::small_pellet || maze[i][j] == Tiles::big_pellet)
+				pelletCounter++;
+		}
+	}
+
+	if (pelletCounter == 0)
+		return true;
+
+	return false;
+}
+
+void GameController::resetGameState()
+{
+	//reset pacman
+	player.pacmanGridX = player.pacmanYStart;
+	player.pacmanGridY = player.pacmanXStart;
+	player.targetPosX = 0;
+	player.targetPosY = 0;
+	player.pacmanX = 0;
+	player.pacmanY = 0;
+	player.turnTo = { 0, 0 };
+
+	//reset blinky
+	r.blinkyX = 0;
+	r.blinkyY = 0;
+	r.blinkyGridX = r.blinkyYStart;
+	r.blinkyGridY = r.blinkyXStart;
+	r.prevGridX = 0;
+	r.prevGridY = 0;
+	r.targetGridX = 0;
+	r.targetGridY = 0;
+	r.targetPosX = 0;
+	r.targetPosY = 0;
+	r.previousTargetX = 0;
+	r.previousTargetY = 0;
+	r.counter = 0;
+	r.animationComplete = true;
+	r.isDead = false;
+	r.isFrightened = false;
+	r.hasReachedTarget = true;
+	r.hasReachedHome = true;
+	r.hasReachedTeleport = true;
+	r.leftTeleporter = false;
+	r.rightTeleporter = false;
+
+	//reset pinky
+	p.pinkyX = 0;
+	p.pinkyY = 0;
+	p.pinkyGridX = p.pinkyYStart;
+	p.pinkyGridY = p.pinkyXStart;
+	p.prevGridX = 0;
+	p.prevGridY = 0;
+	p.targetGridX = 0;
+	p.targetGridY = 0;
+	p.targetPosX = 0;
+	p.targetPosY = 0;
+	p.previousTargetX = 0;
+	p.previousTargetY = 0;
+	p.counter = 0;
+	p.animationComplete = true;
+	p.isDead = false;
+	p.isFrightened = false;
+	p.hasReachedTarget = true;
+	p.hasReachedHome = true;
+	p.hasReachedTeleport = true;
+	p.leftTeleporter = false;
+	p.rightTeleporter = false;
+
+	//reset inky
+	t.inkyX = 0;
+	t.inkyY = 0;
+	t.inkyGridX = t.inkyYStart;
+	t.inkyGridY = t.inkyXStart;
+	t.prevGridX = 0;
+	t.prevGridY = 0;
+	t.targetGridX = 0;
+	t.targetGridY = 0;
+	t.targetPosX = 0;
+	t.targetPosY = 0;
+	t.previousTargetX = 0;
+	t.previousTargetY = 0;
+	t.counter = 0;
+	t.animationComplete = true;
+	t.isDead = false;
+	t.isFrightened = false;
+	t.hasReachedTarget = true;
+	t.hasReachedHome = true;
+	t.hasReachedTeleport = true;
+	t.leftTeleporter = false;
+	t.rightTeleporter = false;
+
+	//reset clyde
+	o.clydeX = 0;
+	o.clydeY = 0;
+	o.clydeGridX = o.clydeYStart;
+	o.clydeGridY = o.clydeXStart;
+	o.prevGridX = 0;
+	o.prevGridY = 0;
+	o.targetGridX = 0;
+	o.targetGridY = 0;
+	o.targetPosX = 0;
+	o.targetPosY = 0;
+	o.previousTargetX = 0;
+	o.previousTargetY = 0;
+	o.counter = 0;
+	o.animationComplete = true;
+	o.isDead = false;
+	o.isFrightened = false;
+	o.hasReachedTarget = true;
+	o.hasReachedHome = true;
+	o.hasReachedTeleport = true;
+	o.leftTeleporter = false;
+	o.rightTeleporter = false;
 }

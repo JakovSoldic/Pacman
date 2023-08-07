@@ -76,17 +76,6 @@ void drawGameBoard(void)
     }
 }
 
-void toggleScatter(int value) {
-	isScatter = true;
-
-	glutTimerFunc(5000, [](int v)
-	{
-		isScatter = false;
-	}, 0);
-
-	glutTimerFunc(7000, toggleScatter, 0);
-}
-
 void playIntroMusic(int value) {
 	m.playIntro();
 	isIntroDone = true;
@@ -127,19 +116,26 @@ void display(void)
 		
 		if(isIntroDone)
 		{
-			//m.playMovementSound();
+			if (gc.checkGameState())
+				currentState = GAME_WON_MENU;
 
-			glutTimerFunc(7000, toggleScatter, 0);
+			m.playMovementSound();
+
+			gc.startScatterDuration();
+			gc.endScatterDuration();
 
 			gc.pacmanController(deltaTime);
 
 			gc.blinkyController(deltaTime);
 
-			//gc.pinkyController(deltaTime);
+			if (numberOfPelletsEaten >= 30)
+				gc.pinkyController(deltaTime);
 
-			//gc.inkyController(deltaTime);
+			if (numberOfPelletsEaten >= 30)
+				gc.inkyController(deltaTime);
 
-			//gc.clydeController(deltaTime);
+			if (numberOfPelletsEaten >= 50)
+				gc.clydeController(deltaTime);
 		}
 
 		break;
@@ -147,7 +143,14 @@ void display(void)
 	case GAME_OVER_MENU:
 		
 		glutKeyboardFunc(handleKeyGameOver);
+		m.movementSoundPlayed = false;
 		menu.displayOverText();
+		break;
+
+	case GAME_WON_MENU:
+
+		glutKeyboardFunc(handleKeyGameOver);
+		menu.displayWonText();
 		break;
 
 	}

@@ -11,7 +11,8 @@ public:
     float text1X, text1Y, text2X, text2Y, text3X, text3Y;
 
     void drawText(const char* text, int x, int y);
-    void displayStartText();
+    void displayWonText();
     void displayOverText();
+    void displayStartText();
     void displayScore();
 };

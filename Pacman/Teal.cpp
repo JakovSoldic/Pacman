@@ -195,16 +195,14 @@ void Inky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacman
 
 	if (isScatter && !isFrightened && !isDead)
 	{
-		if (hasReachedCorner)
+		if (animationComplete)
 		{
-			getPathDead(inkyCornerX, inkyCornerY);
-			hasReachedCorner = false;
+			getPathChase(inkyCornerX, inkyCornerY);
 		}
 	}
 
 	if (!isDead && !isFrightened && !isScatter && !leftTeleporter && !rightTeleporter)
 	{
-		//if (bfs3.countValidDirections(inkyGridX, inkyGridY) >= 3 || bfs3.isCorner(inkyGridX, inkyGridY, prevGridX, prevGridY))
 		if(animationComplete)
 		{
 			int dx = 0;
@@ -240,7 +238,6 @@ void Inky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacman
 			pair<int, int> checkDoubleVector = bfs3.findClosestValidCoordinates(dx, dy, blinkyGridX, blinkyGridY);
 
 			getPathChase(checkDoubleVector.first, checkDoubleVector.second);
-
 		}
 	}
 }
@@ -295,13 +292,13 @@ void Inky::updateInky(float deltaTime)
 		{
 			inkyGridX = 14;
 			inkyGridY = 26;
-			inkyX = 13;
+			inkyX = 12;
 		}
 		else if (inkyGridX == 14 && inkyGridY == 27)
 		{
 			inkyGridX = 14;
 			inkyGridY = 1;
-			inkyX = -12;
+			inkyX = -13;
 		}
 	}
 }
@@ -313,7 +310,7 @@ void Inky::setInkySpeed()
 	else if (isDead)
 		inkySpeed = 6.0f;
 	else
-		inkySpeed = 3.4f;
+		inkySpeed = 6.0f;
 }
 
 void Inky::checkCollision(int targetX, int targetY)
@@ -333,6 +330,7 @@ void Inky::checkCollision(int targetX, int targetY)
 	{
 		if (inkyGridX == targetX && inkyGridY == targetY)
 		{
+			lives--;
 			m3.stopMovementSound();
 			m3.playDeath();
 			currentState = GAME_OVER_MENU;

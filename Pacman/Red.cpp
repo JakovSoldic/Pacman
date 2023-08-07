@@ -195,16 +195,14 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 
 	if (isScatter && !isFrightened && !isDead)
 	{
-		if (hasReachedCorner)
+		if (animationComplete)
 		{
-			getPathDead(blinkyCornerX, blinkyCornerY);
-			hasReachedCorner = false;
+			getPathChase(blinkyCornerX, blinkyCornerY);
 		}
 	}
 
 	if (!isDead && !isFrightened && !isScatter && !leftTeleporter && !rightTeleporter)
 	{
-		//if (bfs1.countValidDirections(blinkyGridX, blinkyGridY) >= 3 || bfs1.isCorner(blinkyGridX, blinkyGridY, prevGridX, prevGridY))
 		if (animationComplete)
 		{
 			getPathChase(pacmanTargetX, pacmanTargetY);
@@ -280,7 +278,7 @@ void Blinky::setBlinkySpeed()
 	else if (isDead)
 		blinkySpeed = 6.0f;
 	else
-		blinkySpeed = 4.0f;
+		blinkySpeed = 6.0f;
 }
 
 void Blinky::checkCollision(int targetX, int targetY)
@@ -300,6 +298,7 @@ void Blinky::checkCollision(int targetX, int targetY)
 	{
 		if (blinkyGridX == targetX && blinkyGridY == targetY)
 		{
+			lives--;
 			m1.stopMovementSound();
 			m1.playDeath();
 			currentState = GAME_OVER_MENU;

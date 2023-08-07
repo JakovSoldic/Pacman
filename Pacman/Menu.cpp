@@ -14,13 +14,34 @@ void Menu::drawText(const char* text, int x, int y)
     }
 }
 
+void Menu::displayWonText()
+{
+    text1X = 11;
+    text1Y = -7;
+    text2X = 10;
+    text2Y = -9;
+    text3X = 10;
+    text3Y = -11;
+
+    string scoreText = "SCORE: " + std::to_string(score);
+    string highScoreText = "HIGHSCORE: " + std::to_string(highScore);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0f, 1.0f, 0.0f);
+    drawText("YOU WON", text1X, text1Y);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    drawText(highScoreText.c_str(), text2X, text2Y);
+    drawText(scoreText.c_str(), text2X, text2Y - 2);
+    drawText("EXIT GAME (2)", text3X, text3Y - 2);
+}
+
 void Menu::displayOverText()
 {
     text1X = 11;
     text1Y = -7;
-    text2X = 9;
+    text2X = 10;
     text2Y = -9;
-    text3X = 9;
+    text3X = 10;
     text3Y = -11;
 
     string scoreText = "SCORE: " + std::to_string(score);
@@ -32,16 +53,18 @@ void Menu::displayOverText()
     glColor3f(1.0f, 1.0f, 1.0f);
     drawText(highScoreText.c_str(), text2X, text2Y);
     drawText(scoreText.c_str(), text2X, text2Y - 2);
-    drawText("EXIT GAME (1)", text3X, text3Y - 2);
+    if (lives > 0)
+        drawText("RETRY (1)", text3X, text3Y - 2);
+    drawText("EXIT GAME (2)", text3X, text3Y - 4);
 }
 
 void Menu::displayStartText()
 {
     text1X = 11;
     text1Y = -7;
-    text2X = 9;
+    text2X = 10;
     text2Y = -9;
-    text3X = 9;
+    text3X = 10;
     text3Y = -11;
 
 
@@ -62,9 +85,11 @@ void Menu::displayScore()
 
     string scoreText = "Score: " + std::to_string(score);
     string highScoreText = "Highscore: " + std::to_string(highScore);
+    string livesText = "Lives: " + std::to_string(lives);
 
     glClear(GL_COLOR_BUFFER_BIT);
     glColor3f(1.0f, 1.0f, 1.0f);
     drawText(scoreText.c_str(), text1X, text1Y);
     drawText(highScoreText.c_str(), text2X, text2Y);
+    drawText(livesText.c_str(), text2X + 15, text2Y);
 }
