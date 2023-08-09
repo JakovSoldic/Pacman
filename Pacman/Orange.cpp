@@ -94,20 +94,7 @@ bool Clyde::isWithinRadius(int pacmanGridX, int pacmanGridY, int clydeGridX, int
 	return distance <= radius;
 }
 
-void Clyde::getPathFrightened(int targetX, int targetY)
-{
-	pathCoordinates.clear();
-	counter = 0;
-
-	vector<BFS::Node*> path = bfs4.bfs(clydeGridX, clydeGridY, targetX, targetY, 0, 0);
-	reverse(path.begin(), path.end());
-
-	for (BFS::Node* node : path) {
-		pathCoordinates.emplace_back(node->x, node->y);
-	}
-}
-
-void Clyde::getPathDead(int targetX, int targetY)
+void Clyde::getPath(int targetX, int targetY)
 {
 	pathCoordinates.clear();
 	counter = 0;
@@ -147,11 +134,11 @@ void Clyde::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 	{
 		if (hasReachedHome)
 		{
-			getPathDead(ghostHomeX, ghostHomeY);
+			getPath(clydeYStart, clydeXStart);
 			hasReachedHome = false;
 		}
 
-		if (clydeGridX == ghostHomeX && clydeGridY == ghostHomeY)
+		if (clydeGridX == clydeYStart && clydeGridY == clydeXStart)
 		{
 			isDead = false;
 			hasReachedTarget = true;
@@ -166,9 +153,9 @@ void Clyde::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 		if (hasReachedTeleport)
 		{
 			if (leftTeleporter)
-				getPathDead(14, 0);
+				getPath(14, 0);
 			else if (rightTeleporter)
-				getPathDead(14, 27);
+				getPath(14, 27);
 			hasReachedTeleport = false;
 		}
 
@@ -192,7 +179,7 @@ void Clyde::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 				path = bfs4.bfs(clydeGridX, clydeGridY, randomGridX, randomGridY, prevGridX, prevGridY);
 			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
-			getPathFrightened(randomGridX, randomGridY);
+			getPath(randomGridX, randomGridY);
 			hasReachedTarget = false;
 		}
 
@@ -260,6 +247,11 @@ void Clyde::updateClyde(float deltaTime)
 
 	}
 
+	if (maze[clydeGridX][clydeGridY] == Tiles::home_tile)
+	{
+		isFrightened = false;
+	}
+
 	if (clydeGridX == 14 && clydeGridY == 22 && prevGridY == 21)
 	{
 		rightTeleporter = true;
@@ -294,7 +286,7 @@ void Clyde::setClydeSpeed()
 	else if (isDead)
 		clydeSpeed = 6.0f;
 	else
-		clydeSpeed = 6.0f;
+		clydeSpeed = 3.5f;
 }
 
 void Clyde::checkCollision(int targetX, int targetY)

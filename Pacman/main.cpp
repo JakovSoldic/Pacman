@@ -165,12 +165,17 @@ void reshape(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-void saveTileLocation()
+void initializeTileLocation()
 {
 	for (int i = 0; i < mapHeight; i++)
 	{
 		for (int j = 0; j < mapWidth; j++)
 		{
+			if (maze[i][j] == 6)
+			{
+				maze[i][j] = Tiles::home_tile;
+			}
+
 			if (maze[i][j] == 5)
 			{
 				maze[i][j] = Tiles::teleport_tile;
@@ -201,7 +206,7 @@ void saveTileLocation()
 
 int main(int argc, char** argv) 
 {
-	saveTileLocation();
+	initializeTileLocation();
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE);

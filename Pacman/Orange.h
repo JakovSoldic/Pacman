@@ -12,7 +12,7 @@ public:
 
     float clydeX = 0, clydeY = 0;
     int clydeGridX = clydeYStart, clydeGridY = clydeXStart;
-    float clydeSpeed = 6.0f;
+    float clydeSpeed = 3.5f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -51,8 +51,7 @@ public:
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
     void drawClyde();
     bool isWithinRadius(int pacmanGridX, int pacmanGridY, int clydeGridX, int clydeGridY, int radius);
-    void getPathFrightened(int targetX, int targetY);
-    void getPathDead(int targetX, int targetY);
+    void getPath(int targetX, int targetY);
     void getPathChase(int targetX, int targetY);
     void setPath(int pacmanTargetX, int pacmanTargetY, bool status);
     void updateClyde(float deltaTime);

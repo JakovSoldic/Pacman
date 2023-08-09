@@ -21,7 +21,7 @@ public:
 
     float pacmanX = 0, pacmanY = 0;
     int pacmanGridX = pacmanYStart, pacmanGridY = pacmanXStart;
-    float playerSpeed = 6.0f;
+    float playerSpeed = 5.0f;
 
     bool ateBigPellet = false;
 

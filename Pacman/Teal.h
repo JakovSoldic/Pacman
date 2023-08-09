@@ -11,7 +11,7 @@ public:
 
     float inkyX = 0, inkyY = 0;
     int inkyGridX = inkyYStart, inkyGridY = inkyXStart;
-    float inkySpeed = 6.0f;
+    float inkySpeed = 4.0f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -49,8 +49,7 @@ public:
 
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
     void drawInky();
-    void getPathFrightened(int targetX, int targetY);
-    void getPathDead(int targetX, int targetY);
+    void getPath(int targetX, int targetY);
     void getPathChase(int targetX, int targetY);
     void setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacmanDirectionX, int pacmanDirectionY, int blinkyGridX, int blinkyGridY);
     void updateInky(float deltaTime);

@@ -9,9 +9,12 @@ public:
     const int blinkyXStart = 13;
     const int blinkyYStart = 11;
 
+    const int blinkyXHome = 14;
+    const int blinkyYHome = 12;
+
     float blinkyX = 0, blinkyY = 0;
     int blinkyGridX = blinkyYStart, blinkyGridY = blinkyXStart;
-    float blinkySpeed = 6.0f;
+    float blinkySpeed = 5.0f;
 
     int prevGridX = 0;
     int prevGridY = 0;
@@ -48,10 +51,8 @@ public:
     bool rightTeleporter = false;
 
     void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
-    void drawEyes();
     void drawBlinky();
-    void getPathFrightened(int targetX, int targetY);
-    void getPathDead(int targetX, int targetY);
+    void getPath(int targetX, int targetY);
     void getPathChase(int targetX, int targetY);
     void setPath(int pacmanTargetX, int pacmanTargetY, bool status);
     void updateBlinky(float deltaTime);

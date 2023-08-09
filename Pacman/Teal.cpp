@@ -85,20 +85,7 @@ void Inky::drawInky()
 	glPopMatrix();
 }
 
-void Inky::getPathFrightened(int targetX, int targetY)
-{
-	pathCoordinates.clear();
-	counter = 0;
-
-	vector<BFS::Node*> path = bfs3.bfs(inkyGridX, inkyGridY, targetX, targetY, 0, 0);
-	reverse(path.begin(), path.end());
-
-	for (BFS::Node* node : path) {
-		pathCoordinates.emplace_back(node->x, node->y);
-	}
-}
-
-void Inky::getPathDead(int targetX, int targetY)
+void Inky::getPath(int targetX, int targetY)
 {
 	pathCoordinates.clear();
 	counter = 0;
@@ -138,11 +125,11 @@ void Inky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacman
 	{
 		if (hasReachedHome)
 		{
-			getPathDead(ghostHomeX, ghostHomeY);
+			getPath(inkyYStart, inkyXStart);
 			hasReachedHome = false;
 		}
 
-		if (inkyGridX == ghostHomeX && inkyGridY == ghostHomeY)
+		if (inkyGridX == inkyYStart && inkyGridY == inkyXStart)
 		{
 			isDead = false;
 			hasReachedTarget = true;
@@ -157,9 +144,9 @@ void Inky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacman
 		if (hasReachedTeleport)
 		{
 			if (leftTeleporter)
-				getPathDead(14, 0);
+				getPath(14, 0);
 			else if (rightTeleporter)
-				getPathDead(14, 27);
+				getPath(14, 27);
 			hasReachedTeleport = false;
 		}
 
@@ -183,7 +170,7 @@ void Inky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacman
 				path = bfs3.bfs(inkyGridX, inkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
 			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
-			getPathFrightened(randomGridX, randomGridY);
+			getPath(randomGridX, randomGridY);
 			hasReachedTarget = false;
 		}
 
@@ -276,6 +263,11 @@ void Inky::updateInky(float deltaTime)
 
 	}
 
+	if (maze[inkyGridX][inkyGridY] == Tiles::home_tile)
+	{
+		isFrightened = false;
+	}
+
 	if (inkyGridX == 14 && inkyGridY == 22 && prevGridY == 21)
 	{
 		rightTeleporter = true;
@@ -310,7 +302,7 @@ void Inky::setInkySpeed()
 	else if (isDead)
 		inkySpeed = 6.0f;
 	else
-		inkySpeed = 6.0f;
+		inkySpeed = 4.0f;
 }
 
 void Inky::checkCollision(int targetX, int targetY)

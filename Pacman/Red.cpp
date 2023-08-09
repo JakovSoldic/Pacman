@@ -85,20 +85,7 @@ void Blinky::drawBlinky()
 	glPopMatrix();
 }
 
-void Blinky::getPathFrightened(int targetX, int targetY)
-{
-	pathCoordinates.clear();
-	counter = 0;
-	
-	vector<BFS::Node*> path = bfs1.bfs(blinkyGridX, blinkyGridY, targetX, targetY, 0, 0);
-	reverse(path.begin(), path.end());
-
-	for (BFS::Node* node : path) {
-		pathCoordinates.emplace_back(node->x, node->y);
-	}
-}
-
-void Blinky::getPathDead(int targetX, int targetY)
+void Blinky::getPath(int targetX, int targetY)
 {
 	pathCoordinates.clear();
 	counter = 0;
@@ -138,18 +125,17 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 	{
 		if (hasReachedHome)
 		{
-			getPathDead(ghostHomeX, ghostHomeY);
+			getPath(blinkyXHome, blinkyYHome);
 			hasReachedHome = false;
 		}
 
-		if (blinkyGridX == ghostHomeX && blinkyGridY == ghostHomeY)
+		if (blinkyGridX == blinkyXHome && blinkyGridY == blinkyYHome)
 		{
 			isDead = false;
 			hasReachedTarget = true;
 			hasReachedHome = true;
 			isFrightened = false;
 		}
-
 	}
 	
 	if ((leftTeleporter || rightTeleporter) && !isDead) 
@@ -157,9 +143,9 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 		if (hasReachedTeleport)
 		{
 			if (leftTeleporter) 
-				getPathDead(14, 0);
+				getPath(14, 0);
 			else if (rightTeleporter)
-				getPathDead(14, 27);
+				getPath(14, 27);
 			hasReachedTeleport = false;
 		}
 
@@ -183,7 +169,7 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 				path = bfs1.bfs(blinkyGridX, blinkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
 			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
-			getPathFrightened(randomGridX, randomGridY);
+			getPath(randomGridX, randomGridY);
 			hasReachedTarget = false;
 		}
 
@@ -244,6 +230,11 @@ void Blinky::updateBlinky(float deltaTime)
 
 	}
 
+	if (maze[blinkyGridX][blinkyGridY] == Tiles::home_tile)
+	{
+		isFrightened = false;
+	}
+
 	if (blinkyGridX == 14 && blinkyGridY == 22 && prevGridY == 21)
 	{
 		rightTeleporter = true;
@@ -278,7 +269,7 @@ void Blinky::setBlinkySpeed()
 	else if (isDead)
 		blinkySpeed = 6.0f;
 	else
-		blinkySpeed = 6.0f;
+		blinkySpeed = 5.0f;
 }
 
 void Blinky::checkCollision(int targetX, int targetY)

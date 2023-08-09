@@ -27,6 +27,7 @@ enum Tiles {
     gate,//number 3 in the maze
     wall,//number 4 in the maze
     teleport_tile,//number 5 in the maze
+    home_tile,//number 6 in the maze
 };
 
 enum GameState {

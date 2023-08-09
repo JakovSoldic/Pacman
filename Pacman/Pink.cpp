@@ -85,20 +85,7 @@ void Pinky::drawPinky()
 	glPopMatrix();
 }
 
-void Pinky::getPathFrightened(int targetX, int targetY)
-{
-	pathCoordinates.clear();
-	counter = 0;
-
-	vector<BFS::Node*> path = bfs2.bfs(pinkyGridX, pinkyGridY, targetX, targetY, 0, 0);
-	reverse(path.begin(), path.end());
-
-	for (BFS::Node* node : path) {
-		pathCoordinates.emplace_back(node->x, node->y);
-	}
-}
-
-void Pinky::getPathDead(int targetX, int targetY)
+void Pinky::getPath(int targetX, int targetY)
 {
 	pathCoordinates.clear();
 	counter = 0;
@@ -138,11 +125,11 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 	{
 		if (hasReachedHome)
 		{
-			getPathDead(ghostHomeX, ghostHomeY);
+			getPath(pinkyYStart, pinkyXStart);
 			hasReachedHome = false;
 		}
 
-		if (pinkyGridX == ghostHomeX && pinkyGridY == ghostHomeY)
+		if (pinkyGridX == pinkyYStart && pinkyGridY == pinkyXStart)
 		{
 			isDead = false;
 			hasReachedTarget = true;
@@ -157,9 +144,9 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 		if (hasReachedTeleport)
 		{
 			if (leftTeleporter)
-				getPathDead(14, 0);
+				getPath(14, 0);
 			else if (rightTeleporter)
-				getPathDead(14, 27);
+				getPath(14, 27);
 			hasReachedTeleport = false;
 		}
 
@@ -183,7 +170,7 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 				path = bfs2.bfs(pinkyGridX, pinkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
 			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
-			getPathFrightened(randomGridX, randomGridY);
+			getPath(randomGridX, randomGridY);
 			hasReachedTarget = false;
 		}
 
@@ -269,6 +256,11 @@ void Pinky::updatePinky(float deltaTime)
 
 	}
 
+	if (maze[pinkyGridX][pinkyGridY] == Tiles::home_tile)
+	{
+		isFrightened = false;
+	}
+
 	if (pinkyGridX == 14 && pinkyGridY == 22 && prevGridY == 21)
 	{
 		rightTeleporter = true;
@@ -303,7 +295,7 @@ void Pinky::setPinkySpeed()
 	else if (isDead)
 		pinkySpeed = 6.0f;
 	else
-		pinkySpeed = 6.0f;
+		pinkySpeed = 4.5f;
 }
 
 void Pinky::checkCollision(int targetX, int targetY)
