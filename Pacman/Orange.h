@@ -48,7 +48,7 @@ public:
     bool leftTeleporter = false;
     bool rightTeleporter = false;
 
-    void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
+    void drawCircle(float centerX, float centerY, float radiusX, float radiusY);
     void drawClyde();
     bool isWithinRadius(int pacmanGridX, int pacmanGridY, int clydeGridX, int clydeGridY, int radius);
     void getPath(int targetX, int targetY);

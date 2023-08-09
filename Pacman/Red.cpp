@@ -15,7 +15,7 @@ using namespace std;
 BFS bfs1;
 Music m1;
 
-void Blinky::drawEllipse(float centerX, float centerY, float radiusX, float radiusY)
+void Blinky::drawCircle(float centerX, float centerY, float radiusX, float radiusY)
 {
 	const int SEGMENTS = 64;
 
@@ -32,12 +32,9 @@ void Blinky::drawEllipse(float centerX, float centerY, float radiusX, float radi
 
 void Blinky::drawBlinky()
 {
-
-	const int SEGMENTS = 32;
-	const float PI = 3.14159265359;
-
 	glPushMatrix();
 	glTranslatef(blinkyX, blinkyY, 0);
+
 	glPointSize(4);
 	glBegin(GL_POINTS);
 	glColor3f(0.0, 0.0, 1.0);
@@ -47,40 +44,35 @@ void Blinky::drawBlinky()
 	glColor3f(0.0, 0.0, 1.0);
 	glVertex2f(0.2f, 0.1f);//right eye
 	glEnd();
+
 	glColor3f(1.0, 1.0, 1.0);
-	drawEllipse(0.20f, 0.15f, 0.15f, 0.20f);//right eyeball
-	drawEllipse(-0.20f, 0.15f, 0.15f, 0.20f);//left eyeball
-	glBegin(GL_TRIANGLE_FAN);
+	drawCircle(0.20f, 0.15f, 0.15f, 0.20f);//right eyeball
+	drawCircle(-0.20f, 0.15f, 0.15f, 0.20f);//left eyeball
+
 	if (isFrightened)
 		glColor3f(0.0, 0.0, 1.0);
 	else if (isDead)
 		glColor3f(0.5, 0.5, 0.5);
 	else
 		glColor3f(1.0, 0.0, 0.0);
-	glVertex3f(0.0, 0.0, 0.0);
-	for (int i = 0; i <= SEGMENTS; i++)
-	{
-		float angle = PI * 2 * (float)i / (float)SEGMENTS;
-		float x = cos(angle);
-		float y = sin(angle);
-		glVertex3f(x * 0.45, y * 0.45, 0.0);
-	}
-	glEnd();
+	drawCircle(0.0f, 0.0f, 0.45f, 0.45f);//circle body
+	
 	if (isFrightened)
 		glColor3f(0.0, 0.0, 1.0);
 	else if (isDead)
 		glColor3f(0.5, 0.5, 0.5);
 	else
 		glColor3f(1.0, 0.0, 0.0);
-	glBegin(GL_POLYGON); // start drawing a polygon
-	glVertex2f(-0.4f, -0.30f); // lower left vertex
-	glVertex2f(0.4f, -0.30f); // lower right vertex
-	glVertex2f(0.4f, 0.0f); // upper right vertex
-	glVertex2f(-0.4f, 0.0f); // upper left vertex
+	glBegin(GL_POLYGON);
+	glVertex2f(-0.4f, -0.30f); //lower left vertex
+	glVertex2f(0.4f, -0.30f); //lower right vertex
+	glVertex2f(0.4f, 0.0f); //upper right vertex
+	glVertex2f(-0.4f, 0.0f); //upper left vertex
 	glEnd();
-	drawEllipse(-0.30f, -0.20f, 0.15f, 0.30f);//feet left
-	drawEllipse(0.00f, -0.20f, 0.15f, 0.30f);//feet middle
-	drawEllipse(0.30f, -0.20f, 0.15f, 0.30f);//feet right
+
+	drawCircle(-0.30f, -0.20f, 0.15f, 0.30f);//feet left
+	drawCircle(0.00f, -0.20f, 0.15f, 0.30f);//feet middle
+	drawCircle(0.30f, -0.20f, 0.15f, 0.30f);//feet right
 
 	glPopMatrix();
 }

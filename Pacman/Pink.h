@@ -47,7 +47,7 @@ public:
     bool leftTeleporter = false;
     bool rightTeleporter = false;
 
-    void drawEllipse(float centerX, float centerY, float radiusX, float radiusY);
+    void drawCircle(float centerX, float centerY, float radiusX, float radiusY);
     void drawPinky();
     void getPath(int targetX, int targetY);
     void getPathChase(int targetX, int targetY);
