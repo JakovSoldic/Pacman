@@ -2,7 +2,7 @@
 
 ## General info
 
-<p>Pacman game made using C++, OpenGL and FreeGLUT. Ghost AI made using BFS algorithm</p>
+<p>Pacman game made using C++, OpenGL and FreeGLUT. Ghost AI made using BFS algorithm.</p>
 
 ## Table of Contents
 
