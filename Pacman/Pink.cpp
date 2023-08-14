@@ -207,9 +207,8 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 				targetX = pacmanTargetX + 4;
 				targetY = pacmanTargetY;
 			}
-			pair<int, int> checkFourInfront = bfs2.findClosestValidCoordinates(targetX, targetY, pinkyGridX, pinkyGridY);
 
-			getPathChase(checkFourInfront.first, checkFourInfront.second);
+			getPathChase(targetX, targetY);
 		}
 	}
 }

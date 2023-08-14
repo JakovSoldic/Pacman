@@ -184,39 +184,38 @@ void Inky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacman
 	{
 		if(animationComplete)
 		{
-			int dx = 0;
-			int dy = 0;
+			int doubleVectorX = 0;
+			int doubleVectorY = 0;
 			int targetX = blinkyGridX;
 			int targetY = blinkyGridY;
 
 			if (pacmanDirectionX == 1)
 			{
 				targetY = blinkyGridY + 2;
-				dx = 2 * pacmanTargetX - blinkyGridX;
-				dy = 2 * targetY - blinkyGridY;
+				doubleVectorX = 2 * pacmanTargetX - blinkyGridX;
+				doubleVectorY = 2 * targetY - blinkyGridY;
 			}
 			else if (pacmanDirectionX == -1)
 			{
 				targetY = blinkyGridY - 2;
-				dx = 2 * pacmanTargetX - blinkyGridX;
-				dy = 2 * targetY - blinkyGridY;
+				doubleVectorX = 2 * pacmanTargetX - blinkyGridX;
+				doubleVectorY = 2 * targetY - blinkyGridY;
 			}
 			else if (pacmanDirectionY == 1)
 			{
 				targetX = blinkyGridX - 2;
-				dx = 2 * targetX - blinkyGridY;
-				dy = 2 * pacmanTargetX - blinkyGridX;
+				doubleVectorX = 2 * targetX - blinkyGridY;
+				doubleVectorY = 2 * pacmanTargetX - blinkyGridX;
 			}
 			else if (pacmanDirectionY == -1)
 			{
 				targetX = blinkyGridX + 2;
-				dx = 2 * targetX - blinkyGridY;
-				dy = 2 * pacmanTargetX - blinkyGridX;
+				doubleVectorX = 2 * targetX - blinkyGridY;
+				doubleVectorY = 2 * pacmanTargetX - blinkyGridX;
 			}
 
-			pair<int, int> checkDoubleVector = bfs3.findClosestValidCoordinates(dx, dy, blinkyGridX, blinkyGridY);
 
-			getPathChase(checkDoubleVector.first, checkDoubleVector.second);
+			getPathChase(doubleVectorX, doubleVectorY);
 		}
 	}
 }
