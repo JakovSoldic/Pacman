@@ -229,33 +229,35 @@ void GameController::frightenedDuration()
 	}
 }
 
-void GameController::startScatterDuration()
+void GameController::endScatterDuration()
 {
 	if (!startScatter)
 	{
 		steady_clock::time_point currentTime = steady_clock::now();
-		duration<float> elapsedDuration = currentTime - startScatterTime;
+		duration<float> elapsedDuration = currentTime - scatterTime;
 
-		if (elapsedDuration.count() >= 7.0f) {
+		if (elapsedDuration.count() >= 4.0f) {
 			startScatter = true;
 			endScatter = false;
-			isScatter = true;
-			startScatterTime = steady_clock::now();
+			isScatter = false;
+			scatterCounter++;
+			scatterTime = steady_clock::now();
 		}
 	}
 }
 
-void GameController::endScatterDuration()
+void GameController::startScatterDuration()
 {
-	if (startScatter && !endScatter) {
+	if (startScatter && !endScatter) 
+	{
 		steady_clock::time_point currentTime = steady_clock::now();
-		duration<float> elapsedDuration = currentTime - endScatterTime;
+		duration<float> elapsedDuration = currentTime - scatterTime;
 
-		if (elapsedDuration.count() >= 5.0f) {
+		if (elapsedDuration.count() >= 15.0f) {
 			endScatter = true;
 			startScatter = false;
-			isScatter = false;
-			endScatterTime = steady_clock::now();
+			isScatter = true;
+			scatterTime = steady_clock::now();
 		}
 	}
 }

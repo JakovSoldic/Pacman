@@ -9,11 +9,10 @@ class GameController
 public:
 
 	steady_clock::time_point bigPelletTime;
-	steady_clock::time_point startScatterTime;
-	steady_clock::time_point endScatterTime;
+	steady_clock::time_point scatterTime;
 
 	bool startScatter = false;
-	bool endScatter = false;
+	bool endScatter = true;
 
 	//stuff for drawing on the screen
 	void drawPacman();

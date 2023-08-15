@@ -119,10 +119,13 @@ void display(void)
 			if (gc.checkGameState())
 				currentState = GAME_WON_MENU;
 
-			//m.playMovementSound();
+			m.playMovementSound();
 
-			gc.startScatterDuration();
-			gc.endScatterDuration();
+			if (scatterCounter <= 3)
+			{
+				gc.startScatterDuration();
+				gc.endScatterDuration();
+			}
 
 			gc.pacmanController(deltaTime);
 
