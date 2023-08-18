@@ -3,9 +3,16 @@
 #include <array>
 #include <cmath>
 
+#include "globalVariables.h"
+#include "BFS.h"
+#include "Music.h"
+
 class Inky
 {
-public:
+private:
+    BFS bfsInky;
+    Music musicPlayer;
+
     const int inkyXStart = 14;
     const int inkyYStart = 14;
 
@@ -47,6 +54,12 @@ public:
     bool leftTeleporter = false;
     bool rightTeleporter = false;
 
+public:
+    int getInkyXStart() { return inkyXStart; }
+    int getInkyYStart() { return inkyYStart; }
+    int getInkyGridX() { return inkyGridX; }
+    int getInkyGridY() { return inkyGridY; }
+
     void drawCircle(float centerX, float centerY, float radiusX, float radiusY);
     void drawInky();
     void getPath(int targetX, int targetY);
@@ -55,4 +68,5 @@ public:
     void updateInky(float deltaTime);
     void setInkySpeed();
     void checkCollision(int targetX, int targetY);
+    void resetInkyStats();
 };

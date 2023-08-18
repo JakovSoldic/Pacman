@@ -6,14 +6,7 @@ using namespace std;
 
 #include <GL/GL.h>
 #include <GL/freeglut.h>
-
 #include "Orange.h"
-#include "globalVariables.h"
-#include "BFS.cpp"
-#include "Music.h"
-
-BFS bfs4;
-Music m4;
 
 void Clyde::drawCircle(float centerX, float centerY, float radiusX, float radiusY)
 {
@@ -91,7 +84,7 @@ void Clyde::getPath(int targetX, int targetY)
 	pathCoordinates.clear();
 	counter = 0;
 
-	vector<BFS::Node*> path = bfs4.bfs(clydeGridX, clydeGridY, targetX, targetY, 0, 0);
+	vector<BFS::Node*> path = bfsClyde.bfs(clydeGridX, clydeGridY, targetX, targetY, 0, 0);
 	reverse(path.begin(), path.end());
 
 	for (BFS::Node* node : path) {
@@ -105,7 +98,7 @@ void Clyde::getPathChase(int targetX, int targetY)
 		pathCoordinates.clear();
 		counter = 0;
 
-		vector<BFS::Node*> path = bfs4.bfs(clydeGridX, clydeGridY, targetX, targetY, prevGridX, prevGridY);
+		vector<BFS::Node*> path = bfsClyde.bfs(clydeGridX, clydeGridY, targetX, targetY, prevGridX, prevGridY);
 		reverse(path.begin(), path.end());
 
 		for (BFS::Node* node : path) {
@@ -168,7 +161,7 @@ void Clyde::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 			{
 				randomGridX = rand() % (mapHeight - 2) + 1;
 				randomGridY = rand() % (mapWidth - 2) + 1;
-				path = bfs4.bfs(clydeGridX, clydeGridY, randomGridX, randomGridY, prevGridX, prevGridY);
+				path = bfsClyde.bfs(clydeGridX, clydeGridY, randomGridX, randomGridY, prevGridX, prevGridY);
 			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
 			getPath(randomGridX, randomGridY);
@@ -290,7 +283,7 @@ void Clyde::checkCollision(int targetX, int targetY)
 			isDead = true;
 			isFrightened = false;
 			score += 200;
-			m4.playAteGhost();
+			musicPlayer.playAteGhost();
 		}
 	}
 
@@ -299,9 +292,34 @@ void Clyde::checkCollision(int targetX, int targetY)
 		if (clydeGridX == targetX && clydeGridY == targetY)
 		{
 			lives--;
-			m4.stopMovementSound();
-			m4.playDeath();
+			musicPlayer.stopMovementSound();
+			musicPlayer.playDeath();
 			currentState = GAME_OVER_MENU;
 		}
 	}
+}
+
+void Clyde::resetClydeStats()
+{
+	clydeX = 0;
+	clydeY = 0;
+	clydeGridX = clydeYStart;
+	clydeGridY = clydeXStart;
+	prevGridX = 0;
+	prevGridY = 0;
+	targetGridX = 0;
+	targetGridY = 0;
+	targetPosX = 0;
+	targetPosY = 0;
+	previousTargetX = 0;
+	previousTargetY = 0;
+	counter = 0;
+	animationComplete = true;
+	isDead = false;
+	isFrightened = false;
+	hasReachedTarget = true;
+	hasReachedHome = true;
+	hasReachedTeleport = true;
+	leftTeleporter = false;
+	rightTeleporter = false;
 }

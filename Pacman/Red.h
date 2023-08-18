@@ -1,11 +1,20 @@
 #pragma once
+#ifndef RED_H
+#define RED_H
 #include <vector>
 #include <array>
 #include <cmath>
 
+#include "globalVariables.h"
+#include "BFS.h"
+#include "Music.h"
+
 class Blinky
 {
-public:
+private:
+    BFS bfsBlinky;
+    Music musicPlayer;
+
     const int blinkyXStart = 13;
     const int blinkyYStart = 11;
 
@@ -50,6 +59,12 @@ public:
     bool leftTeleporter = false;
     bool rightTeleporter = false;
 
+public:
+    int getBlinkyXStart() { return blinkyXStart; }
+    int getBlinkyYStart() { return blinkyYStart; }
+    int getBlinkyGridX() { return blinkyGridX; }
+    int getBlinkyGridY() { return blinkyGridY; }
+
     void drawCircle(float centerX, float centerY, float radiusX, float radiusY);
     void drawBlinky();
     void getPath(int targetX, int targetY);
@@ -58,4 +73,6 @@ public:
     void updateBlinky(float deltaTime);
     void setBlinkySpeed();
     void checkCollision(int targetX, int targetY);
+    void resetBlinkyStats();
 };
+#endif

@@ -9,24 +9,11 @@ using namespace chrono;
 #include <GL/freeglut.h>
 #include "GameController.h"
 
-#include "pacman.h"
-#include "Red.h"
-#include "Pink.h"
-#include "Teal.h"
-#include "Orange.h"
-#include "globalVariables.h"
-
-Pacman player;
-Blinky r;
-Pinky p;
-Inky t;
-Clyde o;
-
 //stuff for drawing on the screen___________________________________________________________
 void GameController::drawPacman()
 {
 	glPushMatrix();
-	glTranslatef(player.pacmanXStart, -player.pacmanYStart, 0);
+	glTranslatef(player.getPacmanXStart(), -player.getPacmanYStart(), 0);
 	player.drawMouth();
 	player.drawPacMan();
 	glPopMatrix();
@@ -35,7 +22,7 @@ void GameController::drawPacman()
 void GameController::drawBlinky()
 {
 	glPushMatrix();
-	glTranslatef(r.blinkyXStart, -r.blinkyYStart, 0);
+	glTranslatef(r.getBlinkyXStart(), -r.getBlinkyYStart(), 0);
 	r.drawBlinky();
 	glPopMatrix();
 }
@@ -43,7 +30,7 @@ void GameController::drawBlinky()
 void GameController::drawPinky()
 {
 	glPushMatrix();
-	glTranslatef(p.pinkyXStart, -p.pinkyYStart, 0);
+	glTranslatef(p.getPinkyXStart(), -p.getPinkyYStart(), 0);
 	p.drawPinky();
 	glPopMatrix();
 }
@@ -51,7 +38,7 @@ void GameController::drawPinky()
 void GameController::drawInky()
 {
 	glPushMatrix();
-	glTranslatef(t.inkyXStart, -t.inkyYStart, 0);
+	glTranslatef(t.getInkyXStart(), -t.getInkyYStart(), 0);
 	t.drawInky();
 	glPopMatrix();
 }
@@ -59,7 +46,7 @@ void GameController::drawInky()
 void GameController::drawClyde()
 {
 	glPushMatrix();
-	glTranslatef(o.clydeXStart, -o.clydeYStart, 0);
+	glTranslatef(o.getClydeXStart(), -o.getClydeYStart(), 0);
 	o.drawClyde();
 	glPopMatrix();
 }
@@ -144,27 +131,27 @@ void GameController::movePacMan(unsigned char key, int x, int y)
 		exit(0);
 		break;
 	case 'd'://right
-		if (maze[player.pacmanGridX][player.pacmanGridY + 1] != Tiles::wall && maze[player.pacmanGridX][player.pacmanGridY + 1] != Tiles::gate)
+		if (maze[player.getPacmanGridX()][player.getPacmanGridY() + 1] != Tiles::wall && maze[player.getPacmanGridX()][player.getPacmanGridY() + 1] != Tiles::gate)
 		{
-			player.turnTo = { 1, 0 };
+			player.setTurnTo(1, 0);
 			break;
 		}
 	case 'a'://left
-		if (maze[player.pacmanGridX][player.pacmanGridY - 1] != Tiles::wall && maze[player.pacmanGridX][player.pacmanGridY - 1] != Tiles::gate)
+		if (maze[player.getPacmanGridX()][player.getPacmanGridY() - 1] != Tiles::wall && maze[player.getPacmanGridX()][player.getPacmanGridY() - 1] != Tiles::gate)
 		{
-			player.turnTo = { -1, 0 };
+			player.setTurnTo(-1, 0);
 			break;
 		}
 	case 'w'://up
-		if (maze[player.pacmanGridX - 1][player.pacmanGridY] != Tiles::wall && maze[player.pacmanGridX - 1][player.pacmanGridY] != Tiles::gate)
+		if (maze[player.getPacmanGridX() - 1][player.getPacmanGridY()] != Tiles::wall && maze[player.getPacmanGridX() - 1][player.getPacmanGridY()] != Tiles::gate)
 		{
-			player.turnTo = { 0, 1 };
+			player.setTurnTo(0, 1);
 			break;
 		}
 	case 's'://down
-		if (maze[player.pacmanGridX + 1][player.pacmanGridY] != Tiles::wall && maze[player.pacmanGridX + 1][player.pacmanGridY] != Tiles::gate)
+		if (maze[player.getPacmanGridX() + 1][player.getPacmanGridY()] != Tiles::wall && maze[player.getPacmanGridX() + 1][player.getPacmanGridY()] != Tiles::gate)
 		{
-			player.turnTo = { 0, -1 };
+			player.setTurnTo(0, -1);
 			break;
 		}
 	}
@@ -224,7 +211,7 @@ void GameController::frightenedDuration()
 
 	if (elapsedDuration.count() >= 5.0f)
 	{
-		player.ateBigPellet = false;
+		player.setAteBigPellet(false);
 		bigPelletTime = std::chrono::steady_clock::time_point();
 	}
 }
@@ -238,7 +225,6 @@ void GameController::endScatterDuration()
 
 		if (elapsedDuration.count() >= 4.0f) {
 			startScatter = true;
-			endScatter = false;
 			isScatter = false;
 			scatterCounter++;
 			scatterTime = steady_clock::now();
@@ -248,13 +234,12 @@ void GameController::endScatterDuration()
 
 void GameController::startScatterDuration()
 {
-	if (startScatter && !endScatter) 
+	if (startScatter) 
 	{
 		steady_clock::time_point currentTime = steady_clock::now();
 		duration<float> elapsedDuration = currentTime - scatterTime;
 
 		if (elapsedDuration.count() >= 15.0f) {
-			endScatter = true;
 			startScatter = false;
 			isScatter = true;
 			scatterTime = steady_clock::now();
@@ -267,7 +252,7 @@ void GameController::pacmanController(float deltaTime)
 {
 	player.updatePacman(deltaTime);
 
-	if (player.ateBigPellet)
+	if (player.getAteBigPellet())
 	{
 		frightenedDuration();
 	}
@@ -275,32 +260,32 @@ void GameController::pacmanController(float deltaTime)
 
 void GameController::blinkyController(float deltaTime)
 {
-	r.checkCollision(player.pacmanGridX, player.pacmanGridY);
-	r.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet);
+	r.checkCollision(player.getPacmanGridX(), player.getPacmanGridY());
+	r.setPath(player.getPacmanGridX(), player.getPacmanGridY(), player.getAteBigPellet());
 	r.setBlinkySpeed();
 	r.updateBlinky(deltaTime);
 }
 
 void GameController::pinkyController(float deltaTime)
 {
-	p.checkCollision(player.pacmanGridX, player.pacmanGridY);
-	p.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet, player.turnTo.x, player.turnTo.y);
+	p.checkCollision(player.getPacmanGridX(), player.getPacmanGridY());
+	p.setPath(player.getPacmanGridX(), player.getPacmanGridY(), player.getAteBigPellet(), player.getPacmanTurnToX(), player.getPacmanTurnToY());
 	p.setPinkySpeed();
 	p.updatePinky(deltaTime);
 }
 
 void GameController::inkyController(float deltaTime)
 {
-	t.checkCollision(player.pacmanGridX, player.pacmanGridY);
-	t.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet, player.turnTo.x, player.turnTo.y, r.blinkyGridX, r.blinkyGridY);
+	t.checkCollision(player.getPacmanGridX(), player.getPacmanGridY());
+	t.setPath(player.getPacmanGridX(), player.getPacmanGridY(), player.getAteBigPellet(), player.getPacmanTurnToX(), player.getPacmanTurnToY(), r.getBlinkyGridX(), r.getBlinkyGridY());
 	t.setInkySpeed();
 	t.updateInky(deltaTime);
 }
 
 void GameController::clydeController(float deltaTime)
 {
-	o.checkCollision(player.pacmanGridX, player.pacmanGridY);
-	o.setPath(player.pacmanGridX, player.pacmanGridY, player.ateBigPellet);
+	o.checkCollision(player.getPacmanGridX(), player.getPacmanGridY());
+	o.setPath(player.getPacmanGridX(), player.getPacmanGridY(), player.getAteBigPellet());
 	o.setClydeSpeed();
 	o.updateClyde(deltaTime);
 }
@@ -328,103 +313,17 @@ bool GameController::checkGameState()
 void GameController::resetGameState()
 {
 	//reset pacman
-	player.pacmanGridX = player.pacmanYStart;
-	player.pacmanGridY = player.pacmanXStart;
-	player.targetPosX = 0;
-	player.targetPosY = 0;
-	player.pacmanX = 0;
-	player.pacmanY = 0;
-	player.turnTo = { 0, 0 };
+	player.resetPacmanStats();
 
 	//reset blinky
-	r.blinkyX = 0;
-	r.blinkyY = 0;
-	r.blinkyGridX = r.blinkyYStart;
-	r.blinkyGridY = r.blinkyXStart;
-	r.prevGridX = 0;
-	r.prevGridY = 0;
-	r.targetGridX = 0;
-	r.targetGridY = 0;
-	r.targetPosX = 0;
-	r.targetPosY = 0;
-	r.previousTargetX = 0;
-	r.previousTargetY = 0;
-	r.counter = 0;
-	r.animationComplete = true;
-	r.isDead = false;
-	r.isFrightened = false;
-	r.hasReachedTarget = true;
-	r.hasReachedHome = true;
-	r.hasReachedTeleport = true;
-	r.leftTeleporter = false;
-	r.rightTeleporter = false;
+	r.resetBlinkyStats();
 
 	//reset pinky
-	p.pinkyX = 0;
-	p.pinkyY = 0;
-	p.pinkyGridX = p.pinkyYStart;
-	p.pinkyGridY = p.pinkyXStart;
-	p.prevGridX = 0;
-	p.prevGridY = 0;
-	p.targetGridX = 0;
-	p.targetGridY = 0;
-	p.targetPosX = 0;
-	p.targetPosY = 0;
-	p.previousTargetX = 0;
-	p.previousTargetY = 0;
-	p.counter = 0;
-	p.animationComplete = true;
-	p.isDead = false;
-	p.isFrightened = false;
-	p.hasReachedTarget = true;
-	p.hasReachedHome = true;
-	p.hasReachedTeleport = true;
-	p.leftTeleporter = false;
-	p.rightTeleporter = false;
+	p.resetPinkyStats();
 
 	//reset inky
-	t.inkyX = 0;
-	t.inkyY = 0;
-	t.inkyGridX = t.inkyYStart;
-	t.inkyGridY = t.inkyXStart;
-	t.prevGridX = 0;
-	t.prevGridY = 0;
-	t.targetGridX = 0;
-	t.targetGridY = 0;
-	t.targetPosX = 0;
-	t.targetPosY = 0;
-	t.previousTargetX = 0;
-	t.previousTargetY = 0;
-	t.counter = 0;
-	t.animationComplete = true;
-	t.isDead = false;
-	t.isFrightened = false;
-	t.hasReachedTarget = true;
-	t.hasReachedHome = true;
-	t.hasReachedTeleport = true;
-	t.leftTeleporter = false;
-	t.rightTeleporter = false;
+	t.resetInkyStats();
 
 	//reset clyde
-	o.clydeX = 0;
-	o.clydeY = 0;
-	o.clydeGridX = o.clydeYStart;
-	o.clydeGridY = o.clydeXStart;
-	o.prevGridX = 0;
-	o.prevGridY = 0;
-	o.targetGridX = 0;
-	o.targetGridY = 0;
-	o.targetPosX = 0;
-	o.targetPosY = 0;
-	o.previousTargetX = 0;
-	o.previousTargetY = 0;
-	o.counter = 0;
-	o.animationComplete = true;
-	o.isDead = false;
-	o.isFrightened = false;
-	o.hasReachedTarget = true;
-	o.hasReachedHome = true;
-	o.hasReachedTeleport = true;
-	o.leftTeleporter = false;
-	o.rightTeleporter = false;
+	o.resetClydeStats();
 }

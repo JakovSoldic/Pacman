@@ -5,7 +5,7 @@
 #include <cstdint>
 class Pacman
 {
-public:
+private:
     struct Point {
         int x;
         int y;
@@ -25,7 +25,20 @@ public:
 
     bool ateBigPellet = false;
 
+public:
+    int getPacmanXStart() { return pacmanXStart; }
+    int getPacmanYStart() { return pacmanYStart; }
+    int getPacmanGridX() { return pacmanGridX; }
+    int getPacmanGridY() { return pacmanGridY; }
+    int getPacmanTurnToX() { return turnTo.x; }
+    int getPacmanTurnToY() { return turnTo.y; }
+    bool getAteBigPellet() { return ateBigPellet; }
+
+    void setAteBigPellet(bool status) { ateBigPellet = status; }
+    void setTurnTo(int x, int y) { turnTo = { x, y }; }
+
     void drawMouth();
     void drawPacMan();
     void updatePacman(float deltaTime);
+    void resetPacmanStats();
 };

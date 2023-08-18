@@ -6,14 +6,7 @@ using namespace std;
 
 #include <GL/GL.h>
 #include <GL/freeglut.h>
-
 #include "Pink.h"
-#include "globalVariables.h"
-#include "BFS.cpp"
-#include "Music.h"
-
-BFS bfs2;
-Music m2;
 
 void Pinky::drawCircle(float centerX, float centerY, float radiusX, float radiusY)
 {
@@ -82,7 +75,7 @@ void Pinky::getPath(int targetX, int targetY)
 	pathCoordinates.clear();
 	counter = 0;
 
-	vector<BFS::Node*> path = bfs2.bfs(pinkyGridX, pinkyGridY, targetX, targetY, 0, 0);
+	vector<BFS::Node*> path = bfsPinky.bfs(pinkyGridX, pinkyGridY, targetX, targetY, 0, 0);
 	reverse(path.begin(), path.end());
 
 	for (BFS::Node* node : path) {
@@ -96,7 +89,7 @@ void Pinky::getPathChase(int targetX, int targetY)
 		pathCoordinates.clear();
 		counter = 0;
 
-		vector<BFS::Node*> path = bfs2.bfs(pinkyGridX, pinkyGridY, targetX, targetY, prevGridX, prevGridY);
+		vector<BFS::Node*> path = bfsPinky.bfs(pinkyGridX, pinkyGridY, targetX, targetY, prevGridX, prevGridY);
 		reverse(path.begin(), path.end());
 
 		for (BFS::Node* node : path) {
@@ -159,7 +152,7 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 			{
 				randomGridX = rand() % (mapHeight - 2) + 1;
 				randomGridY = rand() % (mapWidth - 2) + 1;
-				path = bfs2.bfs(pinkyGridX, pinkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
+				path = bfsPinky.bfs(pinkyGridX, pinkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
 			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
 			getPath(randomGridX, randomGridY);
@@ -298,7 +291,7 @@ void Pinky::checkCollision(int targetX, int targetY)
 			isDead = true;
 			isFrightened = false;
 			score += 200;
-			m2.playAteGhost();
+			musicPlayer.playAteGhost();
 		}
 	}
 
@@ -307,9 +300,34 @@ void Pinky::checkCollision(int targetX, int targetY)
 		if (pinkyGridX == targetX && pinkyGridY == targetY)
 		{
 			lives--;
-			m2.stopMovementSound();
-			m2.playDeath();
+			musicPlayer.stopMovementSound();
+			musicPlayer.playDeath();
 			currentState = GAME_OVER_MENU;
 		}
 	}
+}
+
+void Pinky::resetPinkyStats()
+{
+	pinkyX = 0;
+	pinkyY = 0;
+	pinkyGridX = pinkyYStart;
+	pinkyGridY = pinkyXStart;
+	prevGridX = 0;
+	prevGridY = 0;
+	targetGridX = 0;
+	targetGridY = 0;
+	targetPosX = 0;
+	targetPosY = 0;
+	previousTargetX = 0;
+	previousTargetY = 0;
+	counter = 0;
+	animationComplete = true;
+	isDead = false;
+	isFrightened = false;
+	hasReachedTarget = true;
+	hasReachedHome = true;
+	hasReachedTeleport = true;
+	leftTeleporter = false;
+	rightTeleporter = false;
 }

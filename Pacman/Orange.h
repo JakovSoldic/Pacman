@@ -1,11 +1,20 @@
 #pragma once
+#ifndef ORANGE_H
+#define ORANGE_H
 #include <vector>
 #include <array>
 #include <cmath>
 
+#include "globalVariables.h"
+#include "BFS.h"
+#include "Music.h"
+
 class Clyde
 {
-public:
+private:
+    BFS bfsClyde;
+    Music musicPlayer;
+
     const int clydeXStart = 15;
     const int clydeYStart = 14;
     const int radius = 8;
@@ -48,6 +57,12 @@ public:
     bool leftTeleporter = false;
     bool rightTeleporter = false;
 
+public:
+    int getClydeXStart() { return clydeXStart; }
+    int getClydeYStart() { return clydeYStart; }
+    int getClydeGridX() { return clydeGridX; }
+    int getClydeGridY() { return clydeGridY; }
+
     void drawCircle(float centerX, float centerY, float radiusX, float radiusY);
     void drawClyde();
     bool isWithinRadius(int pacmanGridX, int pacmanGridY, int clydeGridX, int clydeGridY, int radius);
@@ -57,4 +72,6 @@ public:
     void updateClyde(float deltaTime);
     void setClydeSpeed();
     void checkCollision(int targetX, int targetY);
+    void resetClydeStats();
 };
+#endif

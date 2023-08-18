@@ -6,14 +6,7 @@ using namespace std;
 
 #include <GL/GL.h>
 #include <GL/freeglut.h>
-
 #include "Red.h"
-#include "globalVariables.h"
-#include "BFS.cpp"
-#include "Music.h"
-
-BFS bfs1;
-Music m1;
 
 void Blinky::drawCircle(float centerX, float centerY, float radiusX, float radiusY)
 {
@@ -82,7 +75,7 @@ void Blinky::getPath(int targetX, int targetY)
 	pathCoordinates.clear();
 	counter = 0;
 	
-	vector<BFS::Node*> path = bfs1.bfs(blinkyGridX, blinkyGridY, targetX, targetY, 0, 0);
+	vector<BFS::Node*> path = bfsBlinky.bfs(blinkyGridX, blinkyGridY, targetX, targetY, 0, 0);
 	reverse(path.begin(), path.end());
 
 	for (BFS::Node* node : path) {
@@ -96,7 +89,7 @@ void Blinky::getPathChase(int targetX, int targetY)
 		pathCoordinates.clear();
 		counter = 0;
 
-		vector<BFS::Node*> path = bfs1.bfs(blinkyGridX, blinkyGridY, targetX, targetY, prevGridX, prevGridY);
+		vector<BFS::Node*> path = bfsBlinky.bfs(blinkyGridX, blinkyGridY, targetX, targetY, prevGridX, prevGridY);
 		reverse(path.begin(), path.end());
 
 		for (BFS::Node* node : path) {
@@ -158,7 +151,7 @@ void Blinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 			{
 				randomGridX = rand() % (mapHeight - 2) + 1;
 				randomGridY = rand() % (mapWidth - 2) + 1;
-				path = bfs1.bfs(blinkyGridX, blinkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
+				path = bfsBlinky.bfs(blinkyGridX, blinkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
 			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
 
 			getPath(randomGridX, randomGridY);
@@ -273,7 +266,7 @@ void Blinky::checkCollision(int targetX, int targetY)
 			isDead = true;
 			isFrightened = false;
 			score += 200;
-			m1.playAteGhost();
+			musicPlayer.playAteGhost();
 		}
 	}
 
@@ -282,9 +275,34 @@ void Blinky::checkCollision(int targetX, int targetY)
 		if (blinkyGridX == targetX && blinkyGridY == targetY)
 		{
 			lives--;
-			m1.stopMovementSound();
-			m1.playDeath();
+			musicPlayer.stopMovementSound();
+			musicPlayer.playDeath();
 			currentState = GAME_OVER_MENU;
 		}
 	}
+}
+
+void Blinky::resetBlinkyStats()
+{
+	blinkyX = 0;
+	blinkyY = 0;
+	blinkyGridX = blinkyYStart;
+	blinkyGridY = blinkyXStart;
+	prevGridX = 0;
+	prevGridY = 0;
+	targetGridX = 0;
+	targetGridY = 0;
+	targetPosX = 0;
+	targetPosY = 0;
+	previousTargetX = 0;
+	previousTargetY = 0;
+	counter = 0;
+	animationComplete = true;
+	isDead = false;
+	isFrightened = false;
+	hasReachedTarget = true;
+	hasReachedHome = true;
+	hasReachedTeleport = true;
+	leftTeleporter = false;
+	rightTeleporter = false;
 }

@@ -126,7 +126,6 @@ void display(void)
 				gc.startScatterDuration();
 				gc.endScatterDuration();
 			}
-
 			gc.pacmanController(deltaTime);
 
 			gc.blinkyController(deltaTime);

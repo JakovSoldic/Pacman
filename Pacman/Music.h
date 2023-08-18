@@ -1,15 +1,20 @@
 #pragma once
+#ifndef MUSIC_H
+#define MUSIC_H
 #include <iostream>
 
 class Music
 {
-public:
+private:
 	bool introPlayed = false;
-	bool movementSoundPlayed = false;
 	
+public:
+	bool movementSoundPlayed = false;
+
 	void playIntro();
 	void playMovementSound();
 	void stopMovementSound();
 	void playAteGhost();
 	void playDeath();
 };
+#endif

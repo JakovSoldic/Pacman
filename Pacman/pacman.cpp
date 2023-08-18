@@ -113,3 +113,14 @@ void Pacman::updatePacman(float deltaTime)
 		}
 	}
 }
+
+void Pacman::resetPacmanStats()
+{
+	pacmanGridX = pacmanYStart;
+	pacmanGridY = pacmanXStart;
+	targetPosX = 0;
+	targetPosY = 0;
+	pacmanX = 0;
+	pacmanY = 0;
+	turnTo = { 0, 0 };
+}

@@ -4,16 +4,28 @@
 using namespace std;
 using namespace chrono;
 
+#include "pacman.h"
+#include "Red.h"
+#include "Pink.h"
+#include "Teal.h"
+#include "Orange.h"
+#include "globalVariables.h"
+
 class GameController
 {
-public:
+private:
+	Pacman player;
+	Blinky r;
+	Pinky p;
+	Inky t;
+	Clyde o;
 
 	steady_clock::time_point bigPelletTime;
 	steady_clock::time_point scatterTime;
 
 	bool startScatter = false;
-	bool endScatter = true;
 
+public:
 	//stuff for drawing on the screen
 	void drawPacman();
 	void drawBlinky();

@@ -1,11 +1,20 @@
 #pragma once
+#ifndef PINK_H
+#define PINK_H
 #include <vector>
 #include <array>
 #include <cmath>
 
+#include "globalVariables.h"
+#include "BFS.h"
+#include "Music.h"
+
 class Pinky
 {
-public:
+private:
+    BFS bfsPinky;
+    Music musicPlayer;
+
     const int pinkyXStart = 13;
     const int pinkyYStart = 14;
 
@@ -47,6 +56,12 @@ public:
     bool leftTeleporter = false;
     bool rightTeleporter = false;
 
+public:
+    int getPinkyXStart() { return pinkyXStart; }
+    int getPinkyYStart() { return pinkyYStart; }
+    int getPinkyGridX() { return pinkyGridX; }
+    int getPinkyGridY() { return pinkyGridY; }
+
     void drawCircle(float centerX, float centerY, float radiusX, float radiusY);
     void drawPinky();
     void getPath(int targetX, int targetY);
@@ -55,4 +70,6 @@ public:
     void updatePinky(float deltaTime);
     void setPinkySpeed();
     void checkCollision(int targetX, int targetY);
+    void resetPinkyStats();
 };
+#endif
