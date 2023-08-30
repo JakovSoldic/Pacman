@@ -52,12 +52,14 @@ private:
 
     bool isDead = false;
     bool isFrightened = false;
-    bool hasReachedTarget = true;
-    bool hasReachedHome = true;
+    bool hasReachedRandomTile = true;
     bool hasReachedTeleport = true;
 
     bool leftTeleporter = false;
     bool rightTeleporter = false;
+
+    int eyesXPos = 0;
+    int eyesYPos = 0;
 
 public:
     int getBlinkyXStart() { return blinkyXStart; }
@@ -66,9 +68,9 @@ public:
     int getBlinkyGridY() { return blinkyGridY; }
 
     void drawCircle(float centerX, float centerY, float radiusX, float radiusY);
+    void drawEyes();
     void drawBlinky();
-    void getPath(int targetX, int targetY);
-    void getPathChase(int targetX, int targetY);
+    void getPath(int targetX, int targetY, int previousTileX, int previousTileY);
     void setPath(int pacmanTargetX, int pacmanTargetY, bool status);
     void updateBlinky(float deltaTime);
     void setBlinkySpeed();

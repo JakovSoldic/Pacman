@@ -8,7 +8,7 @@ int BFS::manhattanDistance(int x1, int y1, int x2, int y2)
     return abs(x1 - x2) + abs(y1 - y2);
 }
 
-bool BFS::isValidPosition(int x, int y)
+bool BFS::withinMapBounds(int x, int y)
 {
     return x >= 0 && x < mapHeight && y >= 0 && y < mapWidth;
 }
@@ -27,7 +27,7 @@ vector<BFS::Node*> BFS::getNeighbors(Node* node)
         int newX = x + dir[i][0];
         int newY = y + dir[i][1];
 
-        if (isValidPosition(newX, newY) && maze[newX][newY] != Tiles::wall)
+        if (withinMapBounds(newX, newY) && maze[newX][newY] != Tiles::wall)
             neighbors.push_back(new Node(newX, newY, node));
     }
 
@@ -53,12 +53,13 @@ vector<BFS::Node*> BFS::getPath(Node* target)
         target = target->parent;
     }
 
+    reverse(path.begin(), path.end());
+
     return path;
 }
 
 vector<BFS::Node*> BFS::bfs(int startX, int startY, int targetX, int targetY, int prevX, int prevY)
 {
-    vector<Node*> path;
     queue<Node*> queue;
     vector<vector<bool>> visited(mapHeight, vector<bool>(mapWidth, false));
 
@@ -75,10 +76,10 @@ vector<BFS::Node*> BFS::bfs(int startX, int startY, int targetX, int targetY, in
         Node* current = queue.front();
         queue.pop();
 
-        int closestCurr = manhattanDistance(current->x, current->y, targetX, targetY);
-        int closestClos = manhattanDistance(closest->x, closest->y, targetX, targetY);
+        int currentTile = manhattanDistance(current->x, current->y, targetX, targetY);
+        int closestTile = manhattanDistance(closest->x, closest->y, targetX, targetY);
 
-        if (closestCurr < closestClos)
+        if (currentTile < closestTile)
             closest = current;
 
         if (current->x == targetX && current->y == targetY)
@@ -87,13 +88,13 @@ vector<BFS::Node*> BFS::bfs(int startX, int startY, int targetX, int targetY, in
             return getPath(current);
         }
 
-        vector<Node*> neighbors = getNeighbors(current);
-        for (Node* neighbor : neighbors)
+        vector<Node*> neighbours = getNeighbors(current);
+        for (Node* i : neighbours)
         {
-            if (!visited[neighbor->x][neighbor->y])
+            if (!visited[i->x][i->y])
             {
-                visited[neighbor->x][neighbor->y] = true;
-                queue.push(neighbor);
+                visited[i->x][i->y] = true;
+                queue.push(i);
             }
         }
     }

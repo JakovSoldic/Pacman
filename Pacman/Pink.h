@@ -49,12 +49,14 @@ private:
 
     bool isDead = false;
     bool isFrightened = false;
-    bool hasReachedTarget = true;
-    bool hasReachedHome = true;
+    bool hasReachedRandomTile = true;
     bool hasReachedTeleport = true;
 
     bool leftTeleporter = false;
     bool rightTeleporter = false;
+
+    int eyesXPos = 0;
+    int eyesYPos = 0;
 
 public:
     int getPinkyXStart() { return pinkyXStart; }
@@ -64,8 +66,8 @@ public:
 
     void drawCircle(float centerX, float centerY, float radiusX, float radiusY);
     void drawPinky();
-    void getPath(int targetX, int targetY);
-    void getPathChase(int targetX, int targetY);
+    void drawEyes();
+    void getPath(int targetX, int targetY, int previousTileX, int previousTileY);
     void setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacmanDirectionX, int pacmanDirectionY);
     void updatePinky(float deltaTime);
     void setPinkySpeed();

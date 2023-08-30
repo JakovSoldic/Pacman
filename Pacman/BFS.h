@@ -19,7 +19,7 @@ public:
     };
 
     int manhattanDistance(int x1, int y1, int x2, int y2);
-    bool isValidPosition(int x, int y);
+    bool withinMapBounds(int x, int y);
     vector<Node*> getNeighbors(Node* node);
     void freeMemory(std::queue<Node*>& queue);
     vector<Node*> getPath(Node* target);

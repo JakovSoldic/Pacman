@@ -16,5 +16,6 @@ public:
 	void stopMovementSound();
 	void playAteGhost();
 	void playDeath();
+	void stopDeath();
 };
 #endif

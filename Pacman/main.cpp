@@ -31,16 +31,6 @@ void handleKeyGameOver(unsigned char key, int x, int y)
 
 void drawGameBoard(void)
 {
-	gc.drawPacman();
-
-	gc.drawBlinky();
-
-	gc.drawPinky();
-
-	gc.drawInky();
-
-	gc.drawClyde();
-
     for (int i = 0; i < mapHeight; i++)
     {
         for (int j = 0; j < mapWidth; j++)
@@ -74,6 +64,16 @@ void drawGameBoard(void)
             glPopMatrix();
         }
     }
+
+	gc.drawPacman();
+
+	gc.drawBlinky();
+
+	gc.drawPinky();
+
+	gc.drawInky();
+
+	gc.drawClyde();
 }
 
 void playIntroMusic(int value) {
@@ -126,6 +126,7 @@ void display(void)
 				gc.startScatterDuration();
 				gc.endScatterDuration();
 			}
+
 			gc.pacmanController(deltaTime);
 
 			gc.blinkyController(deltaTime);

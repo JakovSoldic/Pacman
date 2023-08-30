@@ -43,3 +43,8 @@ void Music::playDeath()
 {
     PlaySound(L"./MusicPlaylist/pacman_death.wav", NULL, SND_FILENAME | SND_ASYNC);
 }
+
+void Music::stopDeath()
+{
+    PlaySound(NULL, NULL, SND_PURGE);
+}

@@ -23,6 +23,7 @@ void GameController::drawBlinky()
 {
 	glPushMatrix();
 	glTranslatef(r.getBlinkyXStart(), -r.getBlinkyYStart(), 0);
+	r.drawEyes();
 	r.drawBlinky();
 	glPopMatrix();
 }
@@ -31,6 +32,7 @@ void GameController::drawPinky()
 {
 	glPushMatrix();
 	glTranslatef(p.getPinkyXStart(), -p.getPinkyYStart(), 0);
+	p.drawEyes();
 	p.drawPinky();
 	glPopMatrix();
 }
@@ -39,6 +41,7 @@ void GameController::drawInky()
 {
 	glPushMatrix();
 	glTranslatef(t.getInkyXStart(), -t.getInkyYStart(), 0);
+	t.drawEyes();
 	t.drawInky();
 	glPopMatrix();
 }
@@ -47,6 +50,7 @@ void GameController::drawClyde()
 {
 	glPushMatrix();
 	glTranslatef(o.getClydeXStart(), -o.getClydeYStart(), 0);
+	o.drawEyes();
 	o.drawClyde();
 	glPopMatrix();
 }
@@ -185,6 +189,7 @@ void GameController::keyboardGameOver(unsigned char key, int x, int y)
 		if (lives > 0 || !checkGameState())
 		{
 			resetGameState();
+			musicPlayer.stopDeath();
 			currentState = GAME;
 		}
 		break;
@@ -201,18 +206,19 @@ void GameController::keyboardGameOver(unsigned char key, int x, int y)
 //timers___________________________________________________________
 void GameController::frightenedDuration()
 {
-	if (!bigPelletTime.time_since_epoch().count())
+	if (!startFirghtened)
 	{
-		bigPelletTime = chrono::steady_clock::now();
+		bigPelletTime = steady_clock::now();
+		startFirghtened = true;
 	}
 
-	chrono::steady_clock::time_point currentTime = chrono::steady_clock::now();
-	chrono::duration<float> elapsedDuration = currentTime - bigPelletTime;
+	steady_clock::time_point currentTime = steady_clock::now();
+	duration<float> elapsedDuration = currentTime - bigPelletTime;
 
 	if (elapsedDuration.count() >= 5.0f)
 	{
 		player.setAteBigPellet(false);
-		bigPelletTime = std::chrono::steady_clock::time_point();
+		startFirghtened = false;
 	}
 }
 

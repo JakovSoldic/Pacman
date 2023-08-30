@@ -50,12 +50,14 @@ private:
 
     bool isDead = false;
     bool isFrightened = false;
-    bool hasReachedTarget = true;
-    bool hasReachedHome = true;
+    bool hasReachedRandomTile = true;
     bool hasReachedTeleport = true;
 
     bool leftTeleporter = false;
     bool rightTeleporter = false;
+
+    int eyesXPos = 0;
+    int eyesYPos = 0;
 
 public:
     int getClydeXStart() { return clydeXStart; }
@@ -64,10 +66,10 @@ public:
     int getClydeGridY() { return clydeGridY; }
 
     void drawCircle(float centerX, float centerY, float radiusX, float radiusY);
+    void drawEyes();
     void drawClyde();
     bool isWithinRadius(int pacmanGridX, int pacmanGridY, int clydeGridX, int clydeGridY, int radius);
-    void getPath(int targetX, int targetY);
-    void getPathChase(int targetX, int targetY);
+    void getPath(int targetX, int targetY, int previousTileX, int previousTileY);
     void setPath(int pacmanTargetX, int pacmanTargetY, bool status);
     void updateClyde(float deltaTime);
     void setClydeSpeed();

@@ -10,6 +10,7 @@ using namespace chrono;
 #include "Teal.h"
 #include "Orange.h"
 #include "globalVariables.h"
+#include "Music.h"
 
 class GameController
 {
@@ -19,10 +20,12 @@ private:
 	Pinky p;
 	Inky t;
 	Clyde o;
+	Music musicPlayer;
 
 	steady_clock::time_point bigPelletTime;
 	steady_clock::time_point scatterTime;
 
+	bool startFirghtened = false;
 	bool startScatter = false;
 
 public:

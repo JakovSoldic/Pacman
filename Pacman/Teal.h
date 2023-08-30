@@ -1,4 +1,6 @@
 #pragma once
+#ifndef TEAL_H
+#define TEAL_H
 #include <vector>
 #include <array>
 #include <cmath>
@@ -47,12 +49,14 @@ private:
 
     bool isDead = false;
     bool isFrightened = false;
-    bool hasReachedTarget = true;
-    bool hasReachedHome = true;
+    bool hasReachedRandomTile = true;
     bool hasReachedTeleport = true;
 
     bool leftTeleporter = false;
     bool rightTeleporter = false;
+
+    int eyesXPos = 0;
+    int eyesYPos = 0;
 
 public:
     int getInkyXStart() { return inkyXStart; }
@@ -61,12 +65,13 @@ public:
     int getInkyGridY() { return inkyGridY; }
 
     void drawCircle(float centerX, float centerY, float radiusX, float radiusY);
+    void drawEyes();
     void drawInky();
-    void getPath(int targetX, int targetY);
-    void getPathChase(int targetX, int targetY);
+    void getPath(int targetX, int targetY, int previousTileX, int previousTileY);
     void setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacmanDirectionX, int pacmanDirectionY, int blinkyGridX, int blinkyGridY);
     void updateInky(float deltaTime);
     void setInkySpeed();
     void checkCollision(int targetX, int targetY);
     void resetInkyStats();
 };
+#endif

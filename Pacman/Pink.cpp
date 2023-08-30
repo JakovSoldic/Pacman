@@ -23,20 +23,61 @@ void Pinky::drawCircle(float centerX, float centerY, float radiusX, float radius
 	glEnd();
 }
 
+void Pinky::drawEyes()
+{
+
+	if (targetGridX != 0)
+	{
+		eyesXPos = targetGridX;
+		eyesYPos = 0;
+	}
+	else if (targetGridY != 0)
+	{
+		eyesXPos = 0;
+		eyesYPos = targetGridY;
+	}
+
+	glPushMatrix();
+	glTranslatef(pinkyX, pinkyY, 0);
+	glPointSize(4);
+
+	glBegin(GL_POINTS);
+	glColor3f(0.0, 0.0, 1.0);
+	if (eyesXPos == 0 && eyesYPos == 0)
+	{
+		glVertex2f(-0.2f, 0.1f);
+		glVertex2f(0.2f, 0.1f);
+	}
+	else if (eyesXPos == 1)
+	{
+		glVertex2f(-0.2f, 0.0f);
+		glVertex2f(0.2f, 0.0f);
+	}
+	else if (eyesXPos == -1)
+	{
+		glVertex2f(-0.2f, 0.2f);
+		glVertex2f(0.2f, 0.2f);
+	}
+	else if (eyesYPos == 1)
+	{
+		glVertex2f(-0.1f, 0.1f);
+		glVertex2f(0.3f, 0.1f);
+	}
+	else if (eyesYPos == -1)
+	{
+		glVertex2f(-0.3f, 0.1f);
+		glVertex2f(0.1f, 0.1f);
+	}
+
+	glEnd();
+	glPopMatrix();
+
+}
+
 void Pinky::drawPinky()
 {
 	glPushMatrix();
 	glTranslatef(pinkyX, pinkyY, 0);
-
-	glPointSize(4);
-	glBegin(GL_POINTS);
-	glColor3f(0.0, 0.0, 1.0);
-	glVertex2f(-0.2f, 0.1f);//left eye
-	glEnd();
-	glBegin(GL_POINTS);
-	glColor3f(0.0, 0.0, 1.0);
-	glVertex2f(0.2f, 0.1f);//right eye
-	glEnd();
 
 	glColor3f(1.0, 1.0, 1.0);
 	drawCircle(0.20f, 0.15f, 0.15f, 0.20f);//right eyeball
@@ -70,27 +111,13 @@ void Pinky::drawPinky()
 	glPopMatrix();
 }
 
-void Pinky::getPath(int targetX, int targetY)
-{
-	pathCoordinates.clear();
-	counter = 0;
-
-	vector<BFS::Node*> path = bfsPinky.bfs(pinkyGridX, pinkyGridY, targetX, targetY, 0, 0);
-	reverse(path.begin(), path.end());
-
-	for (BFS::Node* node : path) {
-		pathCoordinates.emplace_back(node->x, node->y);
-	}
-}
-
-void Pinky::getPathChase(int targetX, int targetY)
+void Pinky::getPath(int targetX, int targetY, int previousTileX, int previousTileY)
 {
 	if (targetX != previousTargetX || targetY != previousTargetY) {
 		pathCoordinates.clear();
 		counter = 0;
 
-		vector<BFS::Node*> path = bfsPinky.bfs(pinkyGridX, pinkyGridY, targetX, targetY, prevGridX, prevGridY);
-		reverse(path.begin(), path.end());
+		vector<BFS::Node*> path = bfsPinky.bfs(pinkyGridX, pinkyGridY, targetX, targetY, previousTileX, previousTileY);
 
 		for (BFS::Node* node : path) {
 			pathCoordinates.emplace_back(node->x, node->y);
@@ -108,17 +135,12 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 
 	if (isDead)
 	{
-		if (hasReachedHome)
-		{
-			getPath(pinkyYStart, pinkyXStart);
-			hasReachedHome = false;
-		}
+		getPath(pinkyYStart, pinkyXStart, 0, 0);
 
 		if (pinkyGridX == pinkyYStart && pinkyGridY == pinkyXStart)
 		{
 			isDead = false;
-			hasReachedTarget = true;
-			hasReachedHome = true;
+			hasReachedRandomTile = true;
 			isFrightened = false;
 		}
 
@@ -129,9 +151,9 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 		if (hasReachedTeleport)
 		{
 			if (leftTeleporter)
-				getPath(14, 0);
+				getPath(14, 0, prevGridX, prevGridY);
 			else if (rightTeleporter)
-				getPath(14, 27);
+				getPath(14, 27, prevGridX, prevGridY);
 			hasReachedTeleport = false;
 		}
 
@@ -144,24 +166,20 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 
 	if (isFrightened && !isDead)
 	{
-		if (hasReachedTarget)
+		if (hasReachedRandomTile)
 		{
 			srand(static_cast<unsigned>(time(0)));
-			vector<BFS::Node*> path;
-			do
-			{
-				randomGridX = rand() % (mapHeight - 2) + 1;
-				randomGridY = rand() % (mapWidth - 2) + 1;
-				path = bfsPinky.bfs(pinkyGridX, pinkyGridY, randomGridX, randomGridY, prevGridX, prevGridY);
-			} while (maze[randomGridX][randomGridY] == Tiles::wall && path.empty());
+			
+			randomGridX = rand() % (mapHeight - 2) + 1;
+			randomGridY = rand() % (mapWidth - 2) + 1;
 
-			getPath(randomGridX, randomGridY);
-			hasReachedTarget = false;
+			getPath(randomGridX, randomGridY, 0, 0);
+			hasReachedRandomTile = false;
 		}
 
 		if (pinkyGridX == randomGridX && pinkyGridY == randomGridY)
 		{
-			hasReachedTarget = true;
+			hasReachedRandomTile = true;
 		}
 	}
 
@@ -169,7 +187,7 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 	{
 		if (animationComplete)
 		{
-			getPathChase(pinkyCornerX, pinkyCornerY);
+			getPath(pinkyCornerX, pinkyCornerY, prevGridX, prevGridY);
 		}
 	}
 
@@ -181,27 +199,18 @@ void Pinky::setPath(int pacmanTargetX, int pacmanTargetY, bool status, int pacma
 			int targetY = pacmanTargetY;
 
 			if (pacmanDirectionX == 1)
-			{
-				targetX = pacmanTargetX;
 				targetY = pacmanTargetY + 4;
-			}
+			
 			else if (pacmanDirectionX == -1)
-			{
-				targetX = pacmanTargetX;
 				targetY = pacmanTargetY - 4;
-			}
+			
 			else if (pacmanDirectionY == 1)
-			{
 				targetX = pacmanTargetX - 4;
-				targetY = pacmanTargetY;
-			}
+			
 			else if (pacmanDirectionY == -1)
-			{
 				targetX = pacmanTargetX + 4;
-				targetY = pacmanTargetY;
-			}
 
-			getPathChase(targetX, targetY);
+			getPath(targetX, targetY, prevGridX, prevGridY);
 		}
 	}
 }
@@ -325,8 +334,7 @@ void Pinky::resetPinkyStats()
 	animationComplete = true;
 	isDead = false;
 	isFrightened = false;
-	hasReachedTarget = true;
-	hasReachedHome = true;
+	hasReachedRandomTile = true;
 	hasReachedTeleport = true;
 	leftTeleporter = false;
 	rightTeleporter = false;
