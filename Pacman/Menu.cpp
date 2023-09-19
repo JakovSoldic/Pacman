@@ -9,8 +9,8 @@ using namespace std;
 void Menu::drawText(const char* text, int x, int y)
 {
     glRasterPos2i(x, y);
-    for (const char* p = text; *p; p++) {
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *p);
+    for (int i = 0; text[i] != '\0'; i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
     }
 }
 

@@ -66,11 +66,8 @@ float constantInterpolation(float startPoint, float endPoint, float speed, float
 	float totalDuration = abs(distance) / speed;
 
 	if (time >= totalDuration)
-	{
 		return endPoint;
-	}
-	else
-	{
+	else {
 		float t = time / totalDuration;
 		return startPoint + (distance * t);
 	}

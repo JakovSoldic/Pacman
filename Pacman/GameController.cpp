@@ -59,50 +59,50 @@ void GameController::drawCube()
 {
 	glColor3f(0, 0, 1);
 	glBegin(GL_POLYGON);
-	glVertex3f(-0.500000, -0.500000, 0.500000);
-	glVertex3f(0.500000, -0.500000, 0.500000);
-	glVertex3f(0.500000, 0.500000, 0.500000);
-	glVertex3f(-0.500000, 0.500000, 0.500000);
+	glVertex3f(-0.5, -0.5, 0.5);
+	glVertex3f(0.5, -0.5, 0.5);
+	glVertex3f(0.5, 0.5, 0.5);
+	glVertex3f(-0.5, 0.5, 0.5);
 	glEnd();
 
 	glColor3f(0, 128, 128);
 	glBegin(GL_POLYGON);
-	glVertex3f(-0.500000, 0.500000, 0.500000);
-	glVertex3f(0.500000, 0.500000, 0.500000);
-	glVertex3f(0.500000, 0.500000, -0.500000);
-	glVertex3f(-0.500000, -0.500000, -0.500000);
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(0.5, 0.5, 0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
 	glEnd();
 
 	glColor3f(0, 128, 128);
 	glBegin(GL_POLYGON);
-	glVertex3f(-0.500000, 0.500000, -0.500000);
-	glVertex3f(0.500000, 0.500000, -0.500000);
-	glVertex3f(0.500000, -0.500000, -0.500000);
-	glVertex3f(-0.500000, -0.500000, -0.500000);
+	glVertex3f(-0.5, 0.5, -0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
 	glEnd();
 
 	glColor3f(0, 128, 128);
 	glBegin(GL_POLYGON);
-	glVertex3f(-0.500000, -0.500000, -0.500000);
-	glVertex3f(0.500000, -0.500000, -0.500000);
-	glVertex3f(0.500000, -0.500000, 0.500000);
-	glVertex3f(-0.500000, -0.500000, 0.500000);
+	glVertex3f(-0.5, -0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+	glVertex3f(0.5, -0.5, 0.5);
+	glVertex3f(-0.5, -0.5, 0.5);
 	glEnd();
 
 	glColor3f(0, 128, 128);
 	glBegin(GL_POLYGON);
-	glVertex3f(0.500000, -0.500000, 0.500000);
-	glVertex3f(0.500000, -0.500000, -0.500000);
-	glVertex3f(0.500000, 0.500000, -0.500000);
-	glVertex3f(0.500000, 0.500000, 0.500000);
+	glVertex3f(0.5, -0.5, 0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+	glVertex3f(0.5, 0.5, 0.5);
 	glEnd();
 
 	glColor3f(0, 128, 128);
 	glBegin(GL_POLYGON);
-	glVertex3f(-0.500000, -0.500000, -0.500000);
-	glVertex3f(-0.500000, -0.500000, 0.500000);
-	glVertex3f(-0.500000, 0.500000, 0.500000);
-	glVertex3f(-0.500000, 0.500000, -0.500000);
+	glVertex3f(-0.5, -0.5, -0.5);
+	glVertex3f(-0.5, -0.5, 0.5);
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(-0.5, 0.5, -0.5);
 	glEnd();
 }
 
@@ -201,7 +201,6 @@ void GameController::keyboardGameOver(unsigned char key, int x, int y)
 
 	glutPostRedisplay();
 }
-
 
 //timers___________________________________________________________
 void GameController::frightenedDuration()

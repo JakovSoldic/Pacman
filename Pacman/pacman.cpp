@@ -15,18 +15,18 @@ void Pacman::drawMouth()
 {
 	glPushMatrix();
 	glTranslatef(pacmanX, pacmanY, 0);
-	if (turnTo.x == 1) {
+	if (turnTo.x == 1) 
 		glRotatef(0, 0, 0, 1);
-	}
-	if (turnTo.x == -1) {
+
+	if (turnTo.x == -1) 
 		glRotatef(180, 0, 0, 1);
-	}
-	if (turnTo.y == 1) {
+
+	if (turnTo.y == 1) 
 		glRotatef(90, 0, 0, 1);
-	}
-	if (turnTo.y == -1) {
+	
+	if (turnTo.y == -1) 
 		glRotatef(-90, 0, 0, 1);
-	}
+	
 
 	glBegin(GL_TRIANGLES);
 	glColor3f(0, 0, 0);
@@ -49,7 +49,7 @@ void Pacman::drawPacMan()
 	glVertex3f(0.0, 0.0, 0.0);
 	for (int i = 0; i <= SEGMENTS; i++)
 	{
-		float angle = PI * 2 * (float)i / (float)SEGMENTS;
+		float angle = 2.0 * 3.1415926 * i / SEGMENTS;
 		float x = cos(angle);
 		float y = sin(angle);
 		glVertex3f(x * 0.5, y * 0.5, 0.0);

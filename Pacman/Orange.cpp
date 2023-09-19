@@ -80,8 +80,8 @@ void Clyde::drawClyde()
 	glTranslatef(clydeX, clydeY, 0);
 
 	glColor3f(1.0, 1.0, 1.0);
-	drawCircle(0.20f, 0.15f, 0.15f, 0.20f);//right eyeball
-	drawCircle(-0.20f, 0.15f, 0.15f, 0.20f);//left eyeball
+	drawCircle(0.20f, 0.15f, 0.15f, 0.20f);
+	drawCircle(-0.20f, 0.15f, 0.15f, 0.20f);
 
 	if (isFrightened)
 		glColor3f(0.0, 0.0, 1.0);
@@ -89,7 +89,7 @@ void Clyde::drawClyde()
 		glColor3f(0.5, 0.5, 0.5);
 	else
 		glColor3f(1.0, 0.65, 0.0);
-	drawCircle(0.0f, 0.0f, 0.45f, 0.45f);//circle body
+	drawCircle(0.0f, 0.0f, 0.45f, 0.45f);
 
 	if (isFrightened)
 		glColor3f(0.0, 0.0, 1.0);
@@ -98,15 +98,15 @@ void Clyde::drawClyde()
 	else
 		glColor3f(1.0, 0.65, 0.0);
 	glBegin(GL_POLYGON);
-	glVertex2f(-0.4f, -0.30f); //lower left vertex
-	glVertex2f(0.4f, -0.30f); //lower right vertex
-	glVertex2f(0.4f, 0.0f); //upper right vertex
-	glVertex2f(-0.4f, 0.0f); //upper left vertex
+	glVertex2f(-0.4f, -0.30f);
+	glVertex2f(0.4f, -0.30f);
+	glVertex2f(0.4f, 0.0f);
+	glVertex2f(-0.4f, 0.0f);
 	glEnd();
 
-	drawCircle(-0.30f, -0.20f, 0.15f, 0.30f);//feet left
-	drawCircle(0.00f, -0.20f, 0.15f, 0.30f);//feet middle
-	drawCircle(0.30f, -0.20f, 0.15f, 0.30f);//feet right
+	drawCircle(-0.30f, -0.20f, 0.15f, 0.30f);
+	drawCircle(0.00f, -0.20f, 0.15f, 0.30f);
+	drawCircle(0.30f, -0.20f, 0.15f, 0.30f);
 
 	glPopMatrix();
 }
@@ -176,10 +176,8 @@ void Clyde::setPath(int pacmanTargetX, int pacmanTargetY, bool status)
 		if (hasReachedRandomTile)
 		{
 			srand(static_cast<unsigned>(time(0)));
-			
-			randomGridX = rand() % (mapHeight - 2) + 1;
-			randomGridY = rand() % (mapWidth - 2) + 1;
-
+			randomGridX = rand() % mapHeight;
+			randomGridY = rand() % mapWidth;
 			getPath(randomGridX, randomGridY, 0, 0);
 			hasReachedRandomTile = false;
 		}

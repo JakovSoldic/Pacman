@@ -35,44 +35,27 @@ void drawGameBoard(void)
     {
         for (int j = 0; j < mapWidth; j++)
         {
+			glPushMatrix();
+			glTranslatef(j, -i, 0);
 			if (maze[i][j] == 4)
-			{
-				glPushMatrix();
-				glTranslatef(j, -i, 0);
 				gc.drawCube();
-			}
+
 			if (maze[i][j] == 1) 
-			{
-				glPushMatrix();
-				glTranslatef(j, -i, 0); 
 				gc.drawSmallPellet();
-			}
 			
 			if (maze[i][j] == 2) 
-			{
-				glPushMatrix();
-				glTranslatef(j, -i, 0);
 				gc.drawBigPellet();
-			}
 			
 			if (maze[i][j] == 3) 
-			{
-				glPushMatrix();
-				glTranslatef(j, -i, 0);
 				gc.drawGate();
-			}
             glPopMatrix();
         }
     }
 
 	gc.drawPacman();
-
 	gc.drawBlinky();
-
 	gc.drawPinky();
-
 	gc.drawInky();
-
 	gc.drawClyde();
 }
 
@@ -175,34 +158,22 @@ void initializeTileLocation()
 		for (int j = 0; j < mapWidth; j++)
 		{
 			if (maze[i][j] == 6)
-			{
 				maze[i][j] = Tiles::home_tile;
-			}
 
 			if (maze[i][j] == 5)
-			{
 				maze[i][j] = Tiles::teleport_tile;
-			}
 
 			if (maze[i][j] == 4)
-			{
 				maze[i][j] = Tiles::wall;
-			}
 
 			if (maze[i][j] == 3)
-			{
 				maze[i][j] = Tiles::gate;
-			}
 
 			if (maze[i][j] == 2)
-			{
 				maze[i][j] = Tiles::big_pellet;
-			}
 
 			if (maze[i][j] == 1)
-			{
 				maze[i][j] = Tiles::small_pellet;
-			}
 		}
 	}
 }
